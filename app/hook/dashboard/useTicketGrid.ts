@@ -2,12 +2,22 @@
 import { useState, useEffect } from "react";
 
 export type Ticket = {
-    id: number;
+    id_ticket: number;
+    id_prioridad: number;
     sucursal: string;
     departamento: string;
     reporteProblema: string;
-    fechaInicio: string;
-    prioridad: string;
+    fechainicio: string;
+    Prioridad:{
+        nombre: string;
+    } | null;
+    Proyecto:{
+        nombre: string;
+    } | null;
+    Estado:{
+        nombree: string;
+    } | null;
+
 };
 
 export function useTickets() {

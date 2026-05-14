@@ -18,6 +18,12 @@ export default function DashboardPage() {
   const handleOpenModal = () => setShowCreateModal(true);
   const handleCloseModal = () => setShowCreateModal(false);
 
+  const [estadoFiltro, setEstadoFiltro] = useState<string>("Todos");
+
+  const ticketsFiltrados = estadoFiltro === "Todos"
+    ? tickets
+    : tickets.filter((ticket) => ticket.Estado?.nombree === estadoFiltro);
+
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-900 text-white">
       <Header />
@@ -25,13 +31,38 @@ export default function DashboardPage() {
         <Sidebar onCreateTicket={handleOpenModal} />
 
         <main className="flex-1 p-6 overflow-auto">
-          <button className="flex items-center bg-gray-800 gap-2 mb-2 p-2 rounded hover:bg-blue-700 font-semibold">
-            1
-          </button>
+          <div className="flex gap-5">
+            <button
+             onClick={() => setEstadoFiltro("Pendiente de asignacion")}
+            className="flex items-center w-42 hover:bg-slate-600 gap-2 mb-2 p-2 rounded font-semibold">
+              Pendeinte de Asig.
+            </button>
+            <button 
+            onClick={() => setEstadoFiltro("Asignado")}
+            className="flex items-center w-32 hover:bg-blue-600 gap-2 mb-2 p-2 rounded  font-semibold">
+              Asignado
+            </button>
+            <button 
+            onClick={() => setEstadoFiltro("En Atencion")}
+            className="flex items-center w-32 hover:bg-amber-500 gap-2 mb-2 p-2 rounded font-semibold">
+              En Atencion
+            </button>
+            <button 
+            onClick={() => setEstadoFiltro("En Validacion")}
+            className="flex items-center w-32 hover:bg-purple-600 gap-2 mb-2 p-2 rounded font-semibold">
+              En Validacion
+            </button>
+            <button 
+            onClick={() => setEstadoFiltro("Resuelto")}
+            className="flex items-center w-32 hover:bg-green-600 gap-2 mb-2 p-2 rounded font-semibold">
+              Resuelto
+            </button>
+          </div>
+
           {loading && <p>Cargando tickets...</p>}
           {error && <p className="text-red-500">{error}</p>}
           {!loading && !error && (
-            <TicketGrid tickets={tickets} onSelect={setSelectedTicket} />
+            <TicketGrid tickets={ticketsFiltrados} onSelect={setSelectedTicket} />
           )}
         </main>
 

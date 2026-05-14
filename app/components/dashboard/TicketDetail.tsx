@@ -7,6 +7,17 @@ type Ticket = {
     fechainicio: string;
     reporteproblema: string;
     fechafin: string;
+    Proyecto:{
+        nombre: string;
+    }
+    Creador:{
+        nombre: string;
+        apellido: string;
+    }
+    Desarr:{
+        nombre: string;
+        apellido: string;
+    }
 };
 
 type Props = {

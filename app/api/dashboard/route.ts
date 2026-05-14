@@ -6,6 +6,7 @@ export async function GET() {
     const { data, error } = await supabase
       .from("ticket") 
       .select(`
+        id_ticket,
         sucursal,
         departamento,
         reporteproblema,

@@ -10,21 +10,22 @@ export default function TicketGrid({ tickets, onSelect }: Props) {
 
     if (tickets.length === 0) return <p>No hay tickets disponibles</p>;
 
-    
+
     const getPriorityImage = (prioridad: number) => {
         switch (prioridad) {
             case 1: return "/images/Alta.png";
             case 2: return "/images/Media.png";
             case 3: return "/images/Baja.png";
+            default: return "/images/default.png";
         }
     };
 
-    return (
+    return (        
         <div className="grid grid-cols-2 gap-4">
             {tickets.map((ticket) => {
-                
-                const prioridad = (ticket.id_prioridad || "Default");
+                console.log("ID del ticket:", ticket.id_ticket);
 
+                const prioridad = ticket.id_prioridad ?? 0;
                 return (
                     <div
                         key={ticket.id_ticket}
@@ -41,8 +42,8 @@ export default function TicketGrid({ tickets, onSelect }: Props) {
 
                         <img
                             src={getPriorityImage(prioridad)}
-                            alt={prioridad}
-                            className="w-22 h-22 mr-4"
+                            alt={ticket.Prioridad?.nombre}
+                            className="w-[88px] h-[88px] mr-4"
                         />
                     </div>
                 );
