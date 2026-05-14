@@ -1,36 +1,50 @@
 'use client';
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
 
-export function useTicketFormOptions() {
-    const [sucursales, setSucursales] = useState<string[]>([]);
-    const [departamentos, setDepartamentos] = useState<string[]>([]);
-    const [loading, setLoading] = useState(true);
+import { useEffect, useState } from "react";
+
+export type Proyecto = {
+    id_proyecto: number;
+    nombre: string;
+};
+
+export function useTicketForm() {
+    const [proyectos, setProyectos] = useState<Proyecto[]>([]);
+    const [loadingProyectos, setLoadingProyectos] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    
 
     useEffect(() => {
-        async function fetchOptions() {
+        async function fetchProyectos() {
             try {
-                const { data: suc, error: errSuc } = await supabase
-                    .from("sucursal")
-                    .select("nombre"); 
-                if (errSuc) throw errSuc;
-                setSucursales(suc?.map((s: any) => s.nombre) || []);
+                const res = await fetch("/api/dashboard/proyecto");
+                const result = await res.json();
 
-                const { data: dep, error: errDep } = await supabase
-                    .from("departamento")
-                    .select("nombre"); 
-                if (errDep) throw errDep;
-                setDepartamentos(dep?.map((d: any) => d.nombre) || []);
+                console.log("Proyectos recibidos:", result);
+
+                if (!result.success) {
+                    setError(result.message);
+                    setProyectos([]);
+                    return;
+                }
+
+                setProyectos(result.proyectos || []);
+
             } catch (err) {
-                setError("Error al cargar opciones");
+                console.error("Error al cargar proyectos:", err);
+                setError("Error al cargar proyectos");
+                setProyectos([]);
+
             } finally {
-                setLoading(false);
+                setLoadingProyectos(false);
             }
         }
 
-        fetchOptions();
+        fetchProyectos();
     }, []);
 
-    return { sucursales, departamentos, loading, error };
+    return {
+        proyectos,
+        loadingProyectos,
+        error,
+    };
 }

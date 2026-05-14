@@ -1,139 +1,119 @@
 'use client';
-import React, { useState } from "react";
 
-type TicketFormData = {
-    sucursal: string;
-    departamento: string;
-    reporteProblema: string;
-};
+import { useState } from "react";
+import { useTicketForm } from "@/app/hook/dashboard/useTicketForm";
+import { useCreateTicket } from "@/app/hook/dashboard/useCreateTicket";
 
 type Props = {
-    onSubmit: (data: TicketFormData) => void; 
-    onCancel: () => void; 
+    onTicketCreado?: () => void;
 };
 
-export default function TicketForm({ onSubmit, onCancel }: Props) {
-    const [formData, setFormData] = useState<TicketFormData>({
-        sucursal: "",
-        departamento: "",
-        reporteProblema: "",
-    });
+export default function TicketForm({ onTicketCreado }: Props) {
+    const { proyectos, loadingProyectos, error } = useTicketForm();
+    const {createTicket, loading, success} = useCreateTicket();
+    const [idProyecto, setIdProyecto] = useState("");
+    const [sucursal, setSucursal] = useState("");
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        onSubmit(formData);
-        setFormData({ sucursal: "", departamento: "", reporteProblema: ""});
+
+        const datosTicket = {
+            id_proyecto: Number(idProyecto),
+            sucursal: sucursal,
+        };
+
+        console.log("Datos enviados desde TicketForm:", datosTicket);
+
+        const ticketCreado = await createTicket(datosTicket);
+
+        if (ticketCreado) {
+            console.log("Ticket creado correctamente:", ticketCreado);
+
+            setIdProyecto("");
+            setSucursal("");
+
+            if (onTicketCreado) {
+                onTicketCreado();
+            }
+        }
     };
+
+    if (loadingProyectos) {
+        return <p className="text-gray-300">Cargando proyectos...</p>;
+    }
+
+    if (error) {
+        return <p className="text-red-500">{error}</p>;
+    }
 
     return (
-        <div className="bg-gray-800 p-6 rounded shadow w-full max-w-md mx-auto">
-            <h2 className="text-xl font-bold mb-4 text-white">Crear Nuevo Ticket</h2>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    name="sucursal"
-                    placeholder="Sucursal"
-                    value={formData.sucursal}
-                    onChange={handleChange}
-                    className="p-2 rounded border border-gray-600 bg-gray-700 text-white"
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <label className="flex flex-col gap-1">
+                Proyecto
+                <select
+                    value={idProyecto}
+                    onChange={(e) => setIdProyecto(e.target.value)}
+                    className="p-2 rounded border bg-gray-700 text-white border-gray-600"
                     required
-                />
-                <input
-                    type="text"
-                    name="departamento"
-                    placeholder="Departamento"
-                    value={formData.departamento}
-                    onChange={handleChange}
-                    className="p-2 rounded border border-gray-600 bg-gray-700 text-white"
-                    required
-                />
-                <textarea
-                    name="reporteProblema"
-                    placeholder="Reporte del problema"
-                    value={formData.reporteProblema}
-                    onChange={handleChange}
-                    className="p-2 rounded border border-gray-600 bg-gray-700 text-white"
-                    required
-                />
+                >
+                    <option value="">Selecciona un proyecto</option>
 
-                <div className="flex justify-between mt-4">
-                    {/* <button type="submit" className="bg-green-600 hover:bg-green-700 p-2 rounded font-semibold">
-                        Guardar
-                    </button>
-                    <button type="button" onClick={onCancel} className="bg-red-600 hover:bg-red-700 p-2 rounded font-semibold">
-                        Cancelar
-                    </button> */}
-                </div>
-            </form>
-        </div>
+                    {proyectos.map((proyecto) => (
+                        <option
+                            key={proyecto.id_proyecto}
+                            value={proyecto.id_proyecto}
+                        >
+                            {proyecto.nombre}
+                        </option>
+                    ))}
+                </select>
+            </label>
+
+            <label className="flex flex-col gap-1">
+                Sucursal
+                <input
+                    type="text"
+                    value={sucursal}
+                    onChange={(e) => setSucursal(e.target.value)}
+                    className="p-2 rounded border bg-gray-700 text-white border-gray-600"
+                    placeholder="Escribe la sucursal"
+                    required
+                />
+            </label>
+
+            {/* <label className="flex flex-col gap-1">
+                Departamento
+                <input
+                    type="text"
+                    value={departamento}
+                    onChange={(e) => setDepartamento(e.target.value)}
+                    className="p-2 rounded border bg-gray-700 text-white border-gray-600"
+                />
+            </label> */}
+
+            {/* <label className="flex flex-col gap-1">
+                Reporte del problema
+                <textarea
+                    value={reporteproblema}
+                    onChange={(e) => setReporteproblema(e.target.value)}
+                    className="p-2 rounded border bg-gray-700 text-white border-gray-600"
+                />
+            </label> */}
+
+            <button
+                type="submit"
+                disabled={loading}
+                className="bg-green-700 hover:bg-green-600 text-white p-2 rounded font-semibold"
+            >
+                {loading ? "Guardando..." : "Guardar ticket"}
+            </button>
+
+            {error && (
+                <p className="text-red-500">{error}</p>
+            )}
+            {success && (
+                <p className="text-green-500">{success}</p>
+            )}
+        </form>
     );
 }
-
-
-
-// 'use client';
-// import { useState } from "react";
-// import { useTicketFormOptions } from "@/app/hooks/dashboard/useTicketForm";
-
-// type Props = {
-//   onSubmit: (data: { sucursal: string; departamento: string; reporteProblema: string; fechaInicio: string }) => void;
-// };
-
-// export default function TicketForm({ onSubmit }: Props) {
-//   const { sucursales, departamentos, loading, error } = useTicketFormOptions();
-
-//   const [sucursal, setSucursal] = useState("");
-//   const [departamento, setDepartamento] = useState("");
-//   const [reporte, setReporte] = useState("");
-//   const [fechaInicio, setFechaInicio] = useState("");
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     onSubmit({ sucursal, departamento, reporteProblema: reporte, fechaInicio });
-//   };
-
-//   if (loading) return <p>Cargando opciones...</p>;
-//   if (error) return <p className="text-red-500">{error}</p>;
-
-//   return (
-//     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-//       <label>
-//         Sucursal
-//         <select value={sucursal} onChange={(e) => setSucursal(e.target.value)} className="p-2 rounded border">
-//           <option value="">Selecciona una sucursal</option>
-//           {sucursales.map((s) => (
-//             <option key={s} value={s}>{s}</option>
-//           ))}
-//         </select>
-//       </label>
-
-//       <label>
-//         Departamento
-//         <select value={departamento} onChange={(e) => setDepartamento(e.target.value)} className="p-2 rounded border">
-//           <option value="">Selecciona un departamento</option>
-//           {departamentos.map((d) => (
-//             <option key={d} value={d}>{d}</option>
-//           ))}
-//         </select>
-//       </label>
-
-//       <label>
-//         Reporte del problema
-//         <input type="text" value={reporte} onChange={(e) => setReporte(e.target.value)} className="p-2 rounded border" />
-//       </label>
-
-//       <label>
-//         Fecha de inicio
-//         <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} className="p-2 rounded border" />
-//       </label>
-
-//       <button type="submit" className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-//         Crear Ticket
-//       </button>
-//     </form>
-//   );
-// }
