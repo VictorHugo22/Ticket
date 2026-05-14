@@ -2,10 +2,10 @@
 import React from "react";
 
 type Props = {
-    onCreate?: () => void; 
+    onCreateTicket: () => void;
 };
 
-export default function Sidebar({ onCreate }: Props) {
+export default function Sidebar({ onCreateTicket }: Props) {
     return (
         <aside className="w-60 bg-gray-800 flex flex-col py-4 px-2 border-r border-gray-700 h-full">
             
@@ -16,9 +16,9 @@ export default function Sidebar({ onCreate }: Props) {
             
             <button
                 className="flex items-center gap-2 mb-2 p-2 rounded bg-blue-600 hover:bg-blue-700 font-semibold"
-                onClick={onCreate}
+                onClick={onCreateTicket}
             >
-                ➕ Ticket
+                ➕ Crear Ticket
             </button>
 
             {/* Menú lateral */}

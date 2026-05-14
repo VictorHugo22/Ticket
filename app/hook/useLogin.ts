@@ -16,21 +16,16 @@ export function useLogin() {
 
             const data = await res.json();
 
-
-
-            const userRole = data;
-
-
             if (!data.success) {
                 setError(data.message);
                 return;
             } else {
-                if (userRole.user.TablaRol.nombrer === "Programador2") {
-                    localStorage.setItem("nombreUsuario", data.user.nombre);
-                    localStorage.setItem("rolUsuario", data.user.TablaRol.nombrer);
-                    router.push("/welcome");
-                }
-                else router.push("/reset-password");
+                //if (userRole.user.TablaRol.nombrer === "Programador2") {
+                localStorage.setItem("nombreUsuario", data.user.nombre);
+                localStorage.setItem("rolUsuario", data.user.TablaRol.nombrer);
+                router.push("/welcome");
+                //}
+                //else router.push("/reset-password");
             }
 
             setError(null);

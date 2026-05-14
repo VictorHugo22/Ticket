@@ -5,7 +5,6 @@ type TicketFormData = {
     sucursal: string;
     departamento: string;
     reporteProblema: string;
-    fechaInicio: string;
 };
 
 type Props = {
@@ -18,7 +17,6 @@ export default function TicketForm({ onSubmit, onCancel }: Props) {
         sucursal: "",
         departamento: "",
         reporteProblema: "",
-        fechaInicio: "",
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -28,7 +26,7 @@ export default function TicketForm({ onSubmit, onCancel }: Props) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSubmit(formData);
-        setFormData({ sucursal: "", departamento: "", reporteProblema: "", fechaInicio: "" });
+        setFormData({ sucursal: "", departamento: "", reporteProblema: ""});
     };
 
     return (
@@ -61,23 +59,81 @@ export default function TicketForm({ onSubmit, onCancel }: Props) {
                     className="p-2 rounded border border-gray-600 bg-gray-700 text-white"
                     required
                 />
-                <input
-                    type="date"
-                    name="fechaInicio"
-                    value={formData.fechaInicio}
-                    onChange={handleChange}
-                    className="p-2 rounded border border-gray-600 bg-gray-700 text-white"
-                    required
-                />
+
                 <div className="flex justify-between mt-4">
-                    <button type="submit" className="bg-green-600 hover:bg-green-700 p-2 rounded font-semibold">
+                    {/* <button type="submit" className="bg-green-600 hover:bg-green-700 p-2 rounded font-semibold">
                         Guardar
                     </button>
                     <button type="button" onClick={onCancel} className="bg-red-600 hover:bg-red-700 p-2 rounded font-semibold">
                         Cancelar
-                    </button>
+                    </button> */}
                 </div>
             </form>
         </div>
     );
 }
+
+
+
+// 'use client';
+// import { useState } from "react";
+// import { useTicketFormOptions } from "@/app/hooks/dashboard/useTicketForm";
+
+// type Props = {
+//   onSubmit: (data: { sucursal: string; departamento: string; reporteProblema: string; fechaInicio: string }) => void;
+// };
+
+// export default function TicketForm({ onSubmit }: Props) {
+//   const { sucursales, departamentos, loading, error } = useTicketFormOptions();
+
+//   const [sucursal, setSucursal] = useState("");
+//   const [departamento, setDepartamento] = useState("");
+//   const [reporte, setReporte] = useState("");
+//   const [fechaInicio, setFechaInicio] = useState("");
+
+//   const handleSubmit = (e: React.FormEvent) => {
+//     e.preventDefault();
+//     onSubmit({ sucursal, departamento, reporteProblema: reporte, fechaInicio });
+//   };
+
+//   if (loading) return <p>Cargando opciones...</p>;
+//   if (error) return <p className="text-red-500">{error}</p>;
+
+//   return (
+//     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+//       <label>
+//         Sucursal
+//         <select value={sucursal} onChange={(e) => setSucursal(e.target.value)} className="p-2 rounded border">
+//           <option value="">Selecciona una sucursal</option>
+//           {sucursales.map((s) => (
+//             <option key={s} value={s}>{s}</option>
+//           ))}
+//         </select>
+//       </label>
+
+//       <label>
+//         Departamento
+//         <select value={departamento} onChange={(e) => setDepartamento(e.target.value)} className="p-2 rounded border">
+//           <option value="">Selecciona un departamento</option>
+//           {departamentos.map((d) => (
+//             <option key={d} value={d}>{d}</option>
+//           ))}
+//         </select>
+//       </label>
+
+//       <label>
+//         Reporte del problema
+//         <input type="text" value={reporte} onChange={(e) => setReporte(e.target.value)} className="p-2 rounded border" />
+//       </label>
+
+//       <label>
+//         Fecha de inicio
+//         <input type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} className="p-2 rounded border" />
+//       </label>
+
+//       <button type="submit" className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+//         Crear Ticket
+//       </button>
+//     </form>
+//   );
+// }
