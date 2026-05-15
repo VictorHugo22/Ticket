@@ -24,7 +24,7 @@ export function useLogin() {
                 //if (userRole.user.TablaRol.nombrer === "Programador2") {
                 localStorage.setItem("idUsuario", data.user.id_usuario.toString());
                 localStorage.setItem("nombreUsuario", data.user.nombre);
-                localStorage.setItem("rolUsuario", data.user.TablaRol?.nombrer || "");
+                localStorage.setItem("rolUsuario", data.user.rol);
                 router.push("/welcome");
                 //}
                 //else router.push("/reset-password");
