@@ -2,16 +2,9 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(req: Request) {
-    const { id_proyecto, sucursal, departamento, problem } = await req.json();
+    const { id_proyecto, sucursal, departamento, problem, fechainicio, id_usuario, id_prioridad } = await req.json();
 
-    console.log("Datos recibidos en API:", {
-        id_proyecto,
-        sucursal,
-        departamento,
-        problem,
-    });
-
-    if (!id_proyecto || !sucursal || !departamento || !problem) {
+    if (!id_proyecto || !sucursal || !departamento || !problem || !id_usuario || !id_prioridad) {
         return NextResponse.json({
             success: false,
             message: "Faltan datos obligatorios",
@@ -20,6 +13,15 @@ export async function POST(req: Request) {
 
     const fechaInicio = new Date().toISOString(); // formato UTC "2026-05-15T15:30:00.000Z"
 
+    console.log("Datos recibidos en API:", {
+        id_proyecto,
+        sucursal,
+        departamento,
+        problem,
+        fechainicio,
+        id_usuario
+    });
+
     const { data, error } = await supabase
         .from("ticket")
         .insert({
@@ -27,7 +29,10 @@ export async function POST(req: Request) {
             sucursal: sucursal,
             departamento: departamento,
             reporteproblema: problem,
-            fechainicio: fechaInicio
+            id_usuario: id_usuario,
+            fechainicio: fechaInicio,
+            id_prioridad: id_prioridad,
+            id_estado: 1
         })
         .select()
         .single();

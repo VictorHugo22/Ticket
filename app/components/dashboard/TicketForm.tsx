@@ -9,9 +9,16 @@ type Props = {
 };
 
 export default function TicketForm({ onTicketCreado }: Props) {
-    const { ticketProyectos, loadingProyectos, errorProyectos } = useTicketForm();
+    const { ticketProyectos,
+        loadingProyectos, 
+        errorProyectos, 
+        ticketPrioridad, 
+        loadingPrioridad, 
+        errorPrioridad 
+    } = useTicketForm();
     const { createTicket, loadingTicket, errorTicket, successTicket } = useCreateTicket();
     const [idProyecto, setIdProyecto] = useState("");
+    const [idPrioridad, setIdPrioridad] = useState("");
     const [sucursal, setSucursal] = useState("");
     const [departamento, setDepartamento] = useState("");
     const [problem, setProblem] = useState("");
@@ -19,11 +26,27 @@ export default function TicketForm({ onTicketCreado }: Props) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Evita que el navegador recargue la página
 
+        const idUsuarioString = localStorage.getItem("idUsuario");
+
+        if (!idUsuarioString) {
+            console.error("No hay usuario logueado en localStorage");
+            return;
+        }
+
+        const idUsuario = Number(idUsuarioString);
+
+        if (isNaN(idUsuario)) {
+            console.error("idUsuario no es un número válido:", idUsuarioString);
+            return;
+        }
+
         const datosTicket = { // ----> construccion del objeto datosTicket
             id_proyecto: Number(idProyecto),
             sucursal: sucursal,
             departamento: departamento,
             problem: problem,
+            id_usuario: Number(idUsuario),
+            id_prioridad: Number(idPrioridad),
         }; // <-------
 
         console.log("Datos enviados desde TicketForm:", datosTicket);
@@ -33,8 +56,11 @@ export default function TicketForm({ onTicketCreado }: Props) {
         if (ticketCreado) {
             console.log("Ticket creado correctamente:", ticketCreado);
 
+            //Limpiar datos
             setIdProyecto("");
             setSucursal("");
+            setDepartamento("");
+            setProblem("");
 
             if (onTicketCreado) {
                 onTicketCreado();
@@ -72,6 +98,29 @@ export default function TicketForm({ onTicketCreado }: Props) {
                             value={proyecto.id_proyecto}
                         >
                             {proyecto.nombre}
+                        </option>
+
+                    ))}
+                </select>
+            </label>
+
+            <label className="flex flex-col gap-1">
+
+                Prioridad
+                <select
+                    value={idPrioridad}
+                    onChange={(e) => setIdPrioridad(e.target.value)}
+                    className="p-2 rounded border bg-gray-700 text-white border-gray-600"
+                    required
+                >
+                    <option value="">Selecciona una prioridad</option>
+
+                    {ticketPrioridad.map((prioridad) => (
+                        <option
+                            key={prioridad.id_prioridad}
+                            value={prioridad.id_prioridad}
+                        >
+                            {prioridad.nombrep}
                         </option>
 
                     ))}

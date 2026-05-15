@@ -13,9 +13,9 @@ export default function TicketGrid({ tickets, onSelect }: Props) {
 
     const getPriorityImage = (prioridad: number) => {
         switch (prioridad) {
-            case 1: return "/images/Alta.png";
+            case 1: return "/images/Baja.png";
             case 2: return "/images/Media.png";
-            case 3: return "/images/Baja.png";
+            case 3: return "/images/Alta.png";
             default: return "/images/default.png";
         }
     };

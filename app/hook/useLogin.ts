@@ -15,14 +15,16 @@ export function useLogin() {
             });
 
             const data = await res.json();
+            console.log("============= Respuesta del login API:", data);
 
             if (!data.success) {
                 setError(data.message);
                 return;
             } else {
                 //if (userRole.user.TablaRol.nombrer === "Programador2") {
+                localStorage.setItem("idUsuario", data.user.id_usuario.toString());
                 localStorage.setItem("nombreUsuario", data.user.nombre);
-                localStorage.setItem("rolUsuario", data.user.TablaRol.nombrer);
+                localStorage.setItem("rolUsuario", data.user.TablaRol?.nombrer || "");
                 router.push("/welcome");
                 //}
                 //else router.push("/reset-password");
