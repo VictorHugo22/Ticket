@@ -8,9 +8,9 @@ export type Proyecto = {
 };
 
 export function useTicketForm() {
-    const [proyectos, setProyectos] = useState<Proyecto[]>([]);
+    const [ticketProyectos, setTicketProyectos] = useState<Proyecto[]>([]);
     const [loadingProyectos, setLoadingProyectos] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [errorProyectos, setError] = useState<string | null>(null);
     
 
     useEffect(() => {
@@ -23,16 +23,18 @@ export function useTicketForm() {
 
                 if (!result.success) {
                     setError(result.message);
-                    setProyectos([]);
+                    setTicketProyectos([]);
                     return;
                 }
 
-                setProyectos(result.proyectos || []);
+                setTicketProyectos(result.proyectos || []);
+                console.log("Datos guardados del proyecto en setProyectos", setTicketProyectos);
+                console.log("Corroborar datos guardados en ticketProyectos", ticketProyectos);
 
             } catch (err) {
                 console.error("Error al cargar proyectos:", err);
                 setError("Error al cargar proyectos");
-                setProyectos([]);
+                setTicketProyectos([]);
 
             } finally {
                 setLoadingProyectos(false);
@@ -43,8 +45,8 @@ export function useTicketForm() {
     }, []);
 
     return {
-        proyectos,
+        ticketProyectos,
         loadingProyectos,
-        error,
+        errorProyectos,
     };
 }

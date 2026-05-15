@@ -29,16 +29,17 @@ export default function TicketDetail({ ticket }: Props) {
     if (!ticket) {
         return <p className="text-gray-400">Selecciona un ticket para ver detalles</p>;
     }
+    console.log("datos del ticket en ticketdetail", ticket);
 
     return (
         <div className="flex flex-col gap-3 bg-gray-900 p-4 rounded shadow">
-            <h1><strong>Proyecto: </strong> {ticket.Proyecto.nombre}</h1> 
+            <h1><strong>Proyecto: </strong> {ticket.Proyecto?.nombre || "Proyecto no asignado"}</h1> 
             <p><strong>Sucursal:</strong> {ticket.sucursal}</p>
             <p><strong>Departamento:</strong> {ticket.departamento}</p>
             <p><strong>Fecha de inicio:</strong> {ticket.fechainicio}</p>
-            <p><strong>Mesa de Ayuda: </strong> {ticket.Creador.nombre} {ticket.Creador.apellido}</p>
+            <p><strong>Mesa de Ayuda: </strong> {ticket.Creador?.nombre || "Nombre no asignado"} {ticket.Creador?.apellido || "Apellido no asignado"}</p>
             <p><strong>Descripcion del problema: </strong> {ticket.reporteproblema}</p>
-            <p><strong>Desarrollador: </strong> {ticket.Desarr.nombre} {ticket.Desarr.apellido}</p>
+            <p><strong>Desarrollador: </strong> {ticket.Desarr?.nombre || "Nombre no asignado"} {ticket.Desarr?.apellido || "Apellido no asignado"}</p>
             <p><strong>Desarrollo de solucion: </strong> {ticket.reporteproblema}</p>
             <p><strong>Fecha de Cierre:</strong> {ticket.fechafin}</p>
         </div>

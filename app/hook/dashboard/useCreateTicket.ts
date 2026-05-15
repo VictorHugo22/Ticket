@@ -5,12 +5,14 @@ import { useState } from "react";
 export type CreateTicketData = {
     id_proyecto: number;
     sucursal: string;
+    departamento: string;
+    problem: string;
 };
 
 export function useCreateTicket() {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
+    const [loadingTicket, setLoading] = useState(false);
+    const [errorTicket, setError] = useState<string | null>(null);
+    const [successTicket, setSuccess] = useState<string | null>(null);
 
     const createTicket = async (data: CreateTicketData) => {
         setLoading(true);
@@ -28,6 +30,8 @@ export function useCreateTicket() {
                 body: JSON.stringify({
                     id_proyecto: data.id_proyecto,
                     sucursal: data.sucursal,
+                    departamento: data.departamento,
+                    problem: data.problem,
                 }),
             });
 
@@ -53,8 +57,8 @@ export function useCreateTicket() {
 
     return {
         createTicket,
-        loading,
-        error,
-        success,
+        loadingTicket,
+        errorTicket,
+        successTicket,
     };
 }

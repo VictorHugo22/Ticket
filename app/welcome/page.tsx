@@ -6,7 +6,6 @@ import TicketDetail from "@/app/components/dashboard/TicketDetail";
 import TicketGrid from "@/app/components/dashboard/TicketGrid";
 import TicketForm from "@/app/components/dashboard/TicketForm";
 import { useTickets, Ticket } from "@/app/hook/dashboard/useTicketGrid";
-import { useCreateTicket } from "@/app/hook/dashboard/useCreateTicket";
 
 
 
@@ -15,11 +14,6 @@ export default function DashboardPage() {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const {
-    createTicket,
-    success,
-  } = useCreateTicket();
 
   const handleOpenModal = () => setShowCreateModal(true);
   const handleCloseModal = () => setShowCreateModal(false);
