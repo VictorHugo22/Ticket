@@ -6,9 +6,10 @@ export type CreateTicketData = {
     id_proyecto: number;
     sucursal: string;
     departamento: string;
-    problem: string;
+    //problem: string;
     id_usuario: number;
     id_prioridad: number;
+    //comentario: string;
 };
 
 export function useCreateTicket() {
@@ -33,9 +34,10 @@ export function useCreateTicket() {
                     id_proyecto: data.id_proyecto,
                     sucursal: data.sucursal,
                     departamento: data.departamento,
-                    problem: data.problem,
+                    //problem: data.problem,
                     id_usuario: data.id_usuario,
-                    id_prioridad: data.id_prioridad
+                    id_prioridad: data.id_prioridad,
+                    //comentario: data.comentario,
                 }),
             });
 

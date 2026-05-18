@@ -1,0 +1,77 @@
+'use client';
+import { useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+
+export type CreateTicketData = {
+  id_proyecto: number;
+  sucursal: string;
+  departamento: string;
+  problem: string;
+  id_usuario: number;    // quien crea el ticket
+  id_prioridad: number;
+};
+
+export function useCreateTicket() {
+  const [loadingTicket, setLoadingTicket] = useState(false);
+  const [errorTicket, setErrorTicket] = useState<string | null>(null);
+  const [successTicket, setSuccessTicket] = useState<string | null>(null);
+
+  const createTicket = async (datos: CreateTicketData) => {
+    setLoadingTicket(true);
+    setErrorTicket(null);
+    setSuccessTicket(null);
+
+    try {
+      // 1️⃣ Insertar ticket en la tabla ticket
+      const { data: ticket, error: ticketError } = await supabase
+        .from("ticket")
+        .insert([{
+          id_proyecto: datos.id_proyecto,
+          sucursal: datos.sucursal,
+          departamento: datos.departamento,
+          problem: datos.problem,
+          id_usuario_creador: datos.id_usuario,
+          id_prioridad: datos.id_prioridad,
+          id_estado: 1, // Pendiente de asignación
+          fechainicio: new Date().toISOString()
+        }])
+        .select()
+        .single();
+
+      if (ticketError || !ticket) {
+        setErrorTicket(ticketError?.message || "Error al crear ticket");
+        return null;
+      }
+
+      // 2️⃣ Insertar comentario inicial en ticket_seguimiento
+      const comentarioInicial = `Ticket creado por el usuario. Problema: ${datos.problem}`;
+
+      const { data: seguimiento, error: seguimientoError } = await supabase
+        .from("ticket_seguimiento")
+        .insert([{
+          id_ticket: ticket.id_ticket,
+          id_usuario: datos.id_usuario,
+          comentario: comentarioInicial
+        }])
+        .select()
+        .single();
+
+      if (seguimientoError) {
+        setErrorTicket(seguimientoError.message);
+        return null;
+      }
+
+      setSuccessTicket("Ticket creado correctamente");
+      return ticket;
+
+    } catch (err) {
+      console.error(err);
+      setErrorTicket("Error inesperado al crear ticket");
+      return null;
+    } finally {
+      setLoadingTicket(false);
+    }
+  };
+
+  return { createTicket, loadingTicket, errorTicket, successTicket };
+}

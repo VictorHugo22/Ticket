@@ -1,15 +1,30 @@
 'use client';
+import { useState, useEffect } from "react";
 import { Ticket } from "@/app/hook/dashboard/useTicketGrid";
+import { Check } from "lucide-react";
 
 type Props = {
     tickets: Ticket[];
     onSelect: (ticket: Ticket) => void;
+    onAccept: (ticket: Ticket) => void;
 };
 
-export default function TicketGrid({ tickets, onSelect }: Props) {
+export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
 
     if (tickets.length === 0) return <p>No hay tickets disponibles</p>;
 
+    const [rolUsuario, setRolUsuario] = useState<string | null>(null);
+    //const [nombreEstado, setNombreEstado] = useState<string | null>(null);
+
+    useEffect(() => {
+        const rol = localStorage.getItem("rolUsuario");
+        setRolUsuario(rol);
+    }, []);
+
+    //const AcceptTicket = rolUsuario != "Programador1" && rolUsuario != "Programador2"; // solo otros roles pueden crear
+    //const puedeAceptarTicket = rolUsuario === "Programador1"; // solo desarrolladores
+
+    //console.log("ROOOOOOOOOL TicketGRID", AcceptTicket);
 
     const getPriorityImage = (prioridad: number) => {
         switch (prioridad) {
@@ -20,16 +35,20 @@ export default function TicketGrid({ tickets, onSelect }: Props) {
         }
     };
 
-    return (        
+    return (
         <div className="grid grid-cols-2 gap-4">
             {tickets.map((ticket) => {
                 console.log("ID del ticket:", ticket.id_ticket);
-
                 const prioridad = ticket.id_prioridad ?? 0;
+                const isPending = ticket.Estado?.id_estado === "Pendiente de asignacion"; // Pendiente de asignación
+                const AcceptTicket =
+                    ["Programador1", "Programador2"].includes(rolUsuario || "") &&
+                    ticket.Estado?.nombree == "Pendiente de asignacion";
+
                 return (
                     <div
                         key={ticket.id_ticket}
-                        className="flex items-center p-4 rounded shadow cursor-pointer hover:shadow-lg bg-gray-700"
+                        className="flex items-center pl-4 rounded shadow cursor-pointer hover:shadow-lg bg-gray-700"
                         onClick={() => onSelect(ticket)}
                     >
 
@@ -40,11 +59,32 @@ export default function TicketGrid({ tickets, onSelect }: Props) {
                             <p className="text-xs text-gray-400">{ticket.fechainicio}</p>
                         </div>
 
+
+
+                        {/* <button>aceptar</button> */}
+
                         <img
                             src={getPriorityImage(prioridad)}
                             alt={ticket.Prioridad?.nombre}
                             className="w-[88px] h-[88px] mr-4"
                         />
+
+
+                        {AcceptTicket && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onAccept(ticket);
+                                }}
+                                className="h-full w-12 flex items-center justify-center border-l border-gray-600 bg-gray-800 hover:bg-green-600 transition-colors duration-200"
+                                title="Aceptar ticket"
+                            >
+                                <Check className="w-7 h-7 text-white" />
+                            </button>
+                        )}
+
+
+
                     </div>
                 );
             })}

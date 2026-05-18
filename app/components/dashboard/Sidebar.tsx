@@ -8,14 +8,15 @@ type Props = {
 export default function Sidebar({ onCreateTicket }: Props) {
     const rolUsuario = localStorage.getItem("rolUsuario");
 
-    const puedeCrearTicket = rolUsuario !== "Programador1"; // solo otros roles pueden crear
+    const puedeCrearTicket = rolUsuario !== "Programador1" && rolUsuario !== "Programador2"; // solo otros roles pueden crear
     const puedeAceptarTicket = rolUsuario === "Programador1"; // solo desarrolladores
+
 
     return (
         <aside className="w-60 bg-gray-800 flex flex-col py-4 px-2 border-r border-gray-700 h-full">
 
             <div className="mb-6">
-                <img src="/logo.png" alt="Logo" className="w-12 h-12 mx-auto" />
+                <img src="/images/logo.png" alt="Logo" className="w-22 h-22 mx-auto pt-3" />
             </div>
 
             {puedeCrearTicket && (

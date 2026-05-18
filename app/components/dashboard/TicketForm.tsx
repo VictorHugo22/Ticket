@@ -21,7 +21,8 @@ export default function TicketForm({ onTicketCreado }: Props) {
     const [idPrioridad, setIdPrioridad] = useState("");
     const [sucursal, setSucursal] = useState("");
     const [departamento, setDepartamento] = useState("");
-    const [problem, setProblem] = useState("");
+    //const [problem, setProblem] = useState("");
+    const [comentario, setComentario] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Evita que el navegador recargue la página
@@ -44,9 +45,10 @@ export default function TicketForm({ onTicketCreado }: Props) {
             id_proyecto: Number(idProyecto),
             sucursal: sucursal,
             departamento: departamento,
-            problem: problem,
+            //problem: problem,
             id_usuario: Number(idUsuario),
             id_prioridad: Number(idPrioridad),
+            comentario: comentario
         }; // <-------
 
         console.log("Datos enviados desde TicketForm:", datosTicket);
@@ -60,7 +62,8 @@ export default function TicketForm({ onTicketCreado }: Props) {
             setIdProyecto("");
             setSucursal("");
             setDepartamento("");
-            setProblem("");
+            //setProblem("");
+            setComentario("");
 
             if (onTicketCreado) {
                 onTicketCreado();
@@ -154,8 +157,8 @@ export default function TicketForm({ onTicketCreado }: Props) {
             <label className="flex flex-col gap-1">
                 Reporte del problema
                 <textarea
-                    value={problem}
-                    onChange={(e) => setProblem(e.target.value)}
+                    value={comentario}
+                    onChange={(e) => setComentario(e.target.value)}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
                     placeholder="Descripción del problema..."
                     required

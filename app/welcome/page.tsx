@@ -10,9 +10,9 @@ import { useTickets, Ticket } from "@/app/hook/dashboard/useTicketGrid";
 
 
 export default function DashboardPage() {
-  const { tickets, loading, error } = useTickets();
+  const { tickets, loading, error, reloadTickets } = useTickets();
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
-
+  const [showCommentsFor, setShowCommentsFor] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const handleOpenModal = () => setShowCreateModal(true);
@@ -62,7 +62,14 @@ export default function DashboardPage() {
           {loading && <p>Cargando tickets...</p>}
           {error && <p className="text-red-500">{error}</p>}
           {!loading && !error && (
-            <TicketGrid tickets={ticketsFiltrados} onSelect={setSelectedTicket} />
+            <TicketGrid
+              tickets={ticketsFiltrados}
+              onSelect={setSelectedTicket}
+              onAccept={(ticket) =>{
+                setSelectedTicket(ticket);
+                setShowCommentsFor(ticket.id_ticket);
+              }}
+            />
           )}
         </main>
 

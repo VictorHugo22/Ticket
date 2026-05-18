@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export type Ticket = {
     id_ticket: number;
@@ -8,13 +8,14 @@ export type Ticket = {
     departamento: string;
     reporteProblema: string;
     fechainicio: string;
-    Prioridad:{
+    Prioridad: {
         nombre: string;
     } | null;
-    Proyecto:{
+    Proyecto: {
         nombre: string;
     } | null;
-    Estado:{
+    Estado: {
+        id_estado: string;
         nombree: string;
     } | null;
 
@@ -25,28 +26,31 @@ export function useTickets() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        async function fetchTickets() {
-            try {
-                const res = await fetch("/api/dashboard");
-                const data = await res.json();
+    const fetchTickets = async () => {
+        setLoading(true);
+        setError(null);
 
-                if (!data.success) {
-                    setError(data.message);
-                    setTickets([]);
-                } else {
-                    setTickets(data.tickets);
-                }
-            } catch (err) {
-                setError("Error al cargar los tickets");
+        try {
+            const res = await fetch("/api/dashboard");
+            const data = await res.json();
+
+            if (!data.success) {
+                setError(data.message);
                 setTickets([]);
-            } finally {
-                setLoading(false);
+            } else {
+                setTickets(data.tickets);
             }
+        } catch (err) {
+            console.error(error);
+            setError("Error al cargar los tickets");
+            setTickets([]);
+        } finally {
+            setLoading(false);
         }
-
+    };
+    useEffect(() => {
         fetchTickets();
     }, []);
 
-    return { tickets, loading, error };
+    return { tickets, loading, error, reloadTickets: fetchTickets };
 }

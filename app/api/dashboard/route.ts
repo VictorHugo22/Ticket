@@ -14,7 +14,7 @@ export async function GET() {
         fechafin,
         id_prioridad,
         Prioridad:prioridad(nombrep), 
-        Estado:estado(nombree),
+        Estado:estado(id_estado, nombree),
         Creador:fk_ticket_usuario(nombre, apellido),
         Desarr:ticket_id_desarrollador_fkey(nombre, apellido),
         Proyecto:proyecto(nombre)

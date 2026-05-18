@@ -2,9 +2,18 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
 export async function POST(req: Request) {
-    const { id_proyecto, sucursal, departamento, problem, fechainicio, id_usuario, id_prioridad } = await req.json();
+    const { id_proyecto,
+        sucursal,
+        departamento,
+        //problem,
+        fechainicio,
+        id_usuario,
+        id_prioridad,
+        comentario,
+        fecha_creacion
+    } = await req.json();
 
-    if (!id_proyecto || !sucursal || !departamento || !problem || !id_usuario || !id_prioridad) {
+    if (!id_proyecto || !sucursal || !departamento || !id_usuario || !id_prioridad) {
         return NextResponse.json({
             success: false,
             message: "Faltan datos obligatorios",
@@ -17,18 +26,17 @@ export async function POST(req: Request) {
         id_proyecto,
         sucursal,
         departamento,
-        problem,
         fechainicio,
         id_usuario
     });
 
-    const { data, error } = await supabase
+    const { data: ticket, error: ticketError } = await supabase
         .from("ticket")
         .insert({
             id_proyecto: id_proyecto,
             sucursal: sucursal,
             departamento: departamento,
-            reporteproblema: problem,
+            //reporteproblema: problem,
             id_usuario: id_usuario,
             fechainicio: fechaInicio,
             id_prioridad: id_prioridad,
@@ -37,20 +45,45 @@ export async function POST(req: Request) {
         .select()
         .single();
 
-    if (error) {
-        console.log("Error al insertar en la DB", error);
+    if (ticketError) {
+        console.log("Error al insertar en la DB", ticketError);
         return NextResponse.json({
             success: false,
             message: "Error al guardar el ticket",
-            error: error.message,
+            error: ticketError.message,
         });
     }
 
-    console.log("Ticket insertado en la DB", data);
+    const id_ticket = ticket.id_ticket;
+
+    const { data: seguimiento, error: seguimientoError } = await supabase
+        .from("seguimiento")
+        .insert([{
+            id_ticket: id_ticket,
+            id_usuario: id_usuario,
+            comentario: comentario,
+            fechaC: fechaInicio,
+        }])
+        .select()
+        .single();
+
+    if (seguimientoError) {
+        console.log("Error al insertar en la DB", seguimientoError);
+        return NextResponse.json({
+            success: false,
+            message: "Error al guardar los comentarios en el ticket",
+            error: seguimientoError.message,
+        });
+    }
+
+
+    console.log("Ticket insertado en la DB", ticket);
+    console.log("Comentarios insertados en el Ticket", seguimiento);
 
     return NextResponse.json({
         success: true,
         message: "Ticket guardado correctamente",
-        ticket: data,
+        ticket: ticket,
+        seguimiento: seguimiento,
     });
 }
