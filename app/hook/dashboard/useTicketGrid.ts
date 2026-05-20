@@ -6,8 +6,9 @@ export type Ticket = {
     id_prioridad: number;
     sucursal: string;
     departamento: string;
-    reporteProblema: string;
+    reporteproblema: string;
     fechainicio: string;
+    fechafin: string;
     Prioridad: {
         nombre: string;
     } | null;
@@ -18,7 +19,14 @@ export type Ticket = {
         id_estado: string;
         nombree: string;
     } | null;
-
+    Creador: {
+        nombre: string;
+        apellido: string;
+    }
+    Desarr: {
+        nombre:string;
+        apellido: string;
+    }
 };
 
 export function useTickets() {

@@ -1,27 +1,7 @@
 'use client';
 
 import React, { useState } from "react";
-
-
-type Ticket = {
-    id_ticket: number;
-    sucursal: string;
-    departamento: string;
-    fechainicio: string;
-    reporteproblema: string;
-    fechafin: string;
-    Proyecto: {
-        nombre: string;
-    }
-    Creador: {
-        nombre: string;
-        apellido: string;
-    }
-    Desarr: {
-        nombre: string;
-        apellido: string;
-    }
-};
+import {Ticket} from "@/app/hook/dashboard/useTicketGrid"
 
 type Props = {
     ticket: Ticket | null;
@@ -30,7 +10,7 @@ type Props = {
 
 export default function TicketDetail({ ticket, showCommentsFor }: Props) {
 
-    const [showSolution, setShowSolution] = useState(false);
+    // const [showSolution, setShowSolution] = useState(false);
     const [comentario, setComentario] = useState("");
 
 
@@ -39,9 +19,15 @@ export default function TicketDetail({ ticket, showCommentsFor }: Props) {
     }
     console.log("datos del ticket en ticketdetail", ticket);
 
-    const handleAcceptClick = () => {
-        setShowSolution(true);
-    }
+    // const handleAcceptClick = () => {
+    //     setShowSolution(true);
+    // }
+    const rolUsuario = localStorage.getItem("rolUsuario");
+    const isDeveloper = rolUsuario === "Programador1" || rolUsuario === "Programador2";
+    const showCommentSection = (showCommentsFor === ticket.id_ticket) || (Number(ticket.Estado?.id_estado) === 2 && isDeveloper);
+    //showCommentsFor === ticket.id_ticket;
+    console.log("Ticketdetail showcommentsFor -------====== ", (Number(ticket.Estado?.id_estado)));
+    console.log("Ticketdetail id_ticket -------====== ", (isDeveloper));
 
     const handleSubmitComment = (e: React.FormEvent) => {
         e.preventDefault();
@@ -66,7 +52,7 @@ export default function TicketDetail({ ticket, showCommentsFor }: Props) {
             </div>
 
 
-            {showCommentsFor === ticket.id_ticket && (
+            {showCommentSection && (
                 <form
                     onSubmit={handleSubmitComment}
                     className="flex flex-col gap-2 bg-gray-800 p-3 rounded"

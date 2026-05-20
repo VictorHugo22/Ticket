@@ -1,32 +1,46 @@
 'use client';
 
-import { useState } from "react";
 import { useTicketForm } from "@/app/hook/dashboard/useTicketForm";
 import { useCreateTicket } from "@/app/hook/dashboard/useCreateTicket";
+import { useForm } from "react-hook-form";
 
 type Props = {
     onTicketCreado?: () => void;
 };
 
+type TikcetFormData = {
+    id_proyectos: string;
+    id_prioridad: string;
+    sucursal: string;
+    departamento: string;
+    comentario: string;
+}
+
 export default function TicketForm({ onTicketCreado }: Props) {
-    const { ticketProyectos,
+    const { 
+        ticketProyectos,
         loadingProyectos, 
         errorProyectos, 
         ticketPrioridad, 
         loadingPrioridad, 
         errorPrioridad 
     } = useTicketForm();
-    const { createTicket, loadingTicket, errorTicket, successTicket } = useCreateTicket();
-    const [idProyecto, setIdProyecto] = useState("");
-    const [idPrioridad, setIdPrioridad] = useState("");
-    const [sucursal, setSucursal] = useState("");
-    const [departamento, setDepartamento] = useState("");
-    //const [problem, setProblem] = useState("");
-    const [comentario, setComentario] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault(); // Evita que el navegador recargue la página
+    const { 
+        createTicket, 
+        loadingTicket, 
+        errorTicket, 
+        successTicket 
+    } = useCreateTicket();
 
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: {errors}
+    } = useForm<TikcetFormData>();
+
+    const onSubmit = async (formData: TikcetFormData) => {
         const idUsuarioString = localStorage.getItem("idUsuario");
 
         if (!idUsuarioString) {
@@ -36,19 +50,14 @@ export default function TicketForm({ onTicketCreado }: Props) {
 
         const idUsuario = Number(idUsuarioString);
 
-        if (isNaN(idUsuario)) {
-            console.error("idUsuario no es un número válido:", idUsuarioString);
-            return;
-        }
-
         const datosTicket = { // ----> construccion del objeto datosTicket
-            id_proyecto: Number(idProyecto),
-            sucursal: sucursal,
-            departamento: departamento,
+            id_proyecto: Number(formData.id_proyectos),
+            sucursal: formData.sucursal,
+            departamento: formData.departamento,
             //problem: problem,
-            id_usuario: Number(idUsuario),
-            id_prioridad: Number(idPrioridad),
-            comentario: comentario
+            id_usuario: idUsuario,
+            id_prioridad: Number(formData.id_prioridad),
+            comentario: formData.comentario
         }; // <-------
 
         console.log("Datos enviados desde TicketForm:", datosTicket);
@@ -59,39 +68,36 @@ export default function TicketForm({ onTicketCreado }: Props) {
             console.log("Ticket creado correctamente:", ticketCreado);
 
             //Limpiar datos
-            setIdProyecto("");
-            setSucursal("");
-            setDepartamento("");
-            //setProblem("");
-            setComentario("");
-
-            if (onTicketCreado) {
+            reset();
+            if (onTicketCreado){
                 onTicketCreado();
             }
         }
     };
 
     if (loadingProyectos) {
-        return <p className="text-gray-300">Cargando proyectos...</p>;
+        return <p className="text-gray-300">Cargando Datos...</p>;
     }
-
     if (errorProyectos) {
         return <p className="text-red-500">{errorProyectos}</p>;
+    }
+    if (errorPrioridad) {
+        return <p className="text-red-500">{errorPrioridad}</p>;
     }
 
     console.log("Proyectos recibidos: (tikcetForm)", ticketProyectos);
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
 
             <label className="flex flex-col gap-1">
 
                 Proyecto
                 <select
-                    value={idProyecto}
-                    onChange={(e) => setIdProyecto(e.target.value)}
+                    {...register("id_proyectos", {
+                        required: "Selecciona un proyecto"
+                    })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
-                    required
                 >
                     <option value="">Selecciona un proyecto</option>
 
@@ -102,19 +108,24 @@ export default function TicketForm({ onTicketCreado }: Props) {
                         >
                             {proyecto.nombre}
                         </option>
-
                     ))}
                 </select>
+
+                {errors.id_proyectos && (
+                    <p className="text-red-500 text-sm">
+                        {errors.id_proyectos.message}
+                    </p>
+                )}
             </label>
 
             <label className="flex flex-col gap-1">
 
                 Prioridad
                 <select
-                    value={idPrioridad}
-                    onChange={(e) => setIdPrioridad(e.target.value)}
+                    {...register("id_prioridad", {
+                        required: "Selecciona una prioridad"
+                    })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
-                    required
                 >
                     <option value="">Selecciona una prioridad</option>
 
@@ -128,41 +139,59 @@ export default function TicketForm({ onTicketCreado }: Props) {
 
                     ))}
                 </select>
+                {errors.id_prioridad && (
+                    <p className="text-red-500 text-sm">
+                        {errors.id_prioridad.message}
+                    </p>
+                )}
             </label>
 
             <label className="flex flex-col gap-1">
                 Sucursal
                 <input
-                    type="text"
-                    value={sucursal}
-                    onChange={(e) => setSucursal(e.target.value)}
+                    {...register("sucursal", {
+                        required: "La sucursal es obligatoria"
+                    })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
                     placeholder="Escribe la sucursal"
-                    required
                 />
+                {errors.sucursal && (
+                    <p className="text-red-500 text-sm">
+                        {errors.sucursal.message}
+                    </p>
+                )}
             </label>
 
             <label className="flex flex-col gap-1">
                 Departamento
                 <input
-                    type="text"
-                    value={departamento}
-                    onChange={(e) => setDepartamento(e.target.value)}
+                    {...register("departamento", {
+                        required: "El departamento es obligatorio"
+                    })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
                     placeholder="Escribe el departamento"
-                    required
                 />
+                {errors.departamento && (
+                    <p className="text-red-500 text-sm">
+                        {errors.sucursal?.message}
+                    </p> 
+                )}
             </label>
 
             <label className="flex flex-col gap-1">
                 Reporte del problema
                 <textarea
-                    value={comentario}
-                    onChange={(e) => setComentario(e.target.value)}
+                    {...register("comentario", {
+                        required: "La descripcion del problema es obligatorio"
+                    })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
                     placeholder="Descripción del problema..."
-                    required
                 />
+                {errors.comentario && (
+                    <p className="text-red-500 text-sm">
+                        {errors.sucursal?.message}
+                    </p>
+                )}
             </label>
 
             <button

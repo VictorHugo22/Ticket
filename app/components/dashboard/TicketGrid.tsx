@@ -10,21 +10,20 @@ type Props = {
 };
 
 export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
-
+    const rolUsuario = localStorage.getItem("rolUsuario");
+    
+    const AcceptTicketRoles = ["Programador1", "Programador2"];
+    //const [nombreEstado, setNombreEstado] = useState<string | null>(null);
     if (tickets.length === 0) return <p>No hay tickets disponibles</p>;
 
-    const [rolUsuario, setRolUsuario] = useState<string | null>(null);
-    //const [nombreEstado, setNombreEstado] = useState<string | null>(null);
-
-    useEffect(() => {
-        const rol = localStorage.getItem("rolUsuario");
-        setRolUsuario(rol);
-    }, []);
+    // useEffect(() => {
+    //     const rol = localStorage.getItem("rolUsuario");
+    //     setRolUsuario(rol);
+    // }, []);
 
     //const AcceptTicket = rolUsuario != "Programador1" && rolUsuario != "Programador2"; // solo otros roles pueden crear
     //const puedeAceptarTicket = rolUsuario === "Programador1"; // solo desarrolladores
 
-    //console.log("ROOOOOOOOOL TicketGRID", AcceptTicket);
 
     const getPriorityImage = (prioridad: number) => {
         switch (prioridad) {
@@ -38,12 +37,12 @@ export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
     return (
         <div className="grid grid-cols-2 gap-4">
             {tickets.map((ticket) => {
-                console.log("ID del ticket:", ticket.id_ticket);
                 const prioridad = ticket.id_prioridad ?? 0;
-                const isPending = ticket.Estado?.id_estado === "Pendiente de asignacion"; // Pendiente de asignación
-                const AcceptTicket =
-                    ["Programador1", "Programador2"].includes(rolUsuario || "") &&
-                    ticket.Estado?.nombree == "Pendiente de asignacion";
+                const isPending = Number(ticket.Estado?.id_estado) === 1;
+                const canAccept = isPending && AcceptTicketRoles.includes(rolUsuario || "");
+                // const AcceptTicket =
+                //     ["Programador1", "Programador2"].includes(rolUsuario || "") &&
+                //     ticket.Estado?.nombree == "Pendiente de asignacion";
 
                 return (
                     <div
@@ -69,8 +68,8 @@ export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
                             className="w-[88px] h-[88px] mr-4"
                         />
 
-
-                        {AcceptTicket && (
+                        
+                        {canAccept && (
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -82,9 +81,6 @@ export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
                                 <Check className="w-7 h-7 text-white" />
                             </button>
                         )}
-
-
-
                     </div>
                 );
             })}

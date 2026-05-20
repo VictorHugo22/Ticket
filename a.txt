@@ -1,77 +1,70 @@
-'use client';
-import { useState } from "react";
+import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabaseClient";
 
-export type CreateTicketData = {
-  id_proyecto: number;
-  sucursal: string;
-  departamento: string;
-  problem: string;
-  id_usuario: number;    // quien crea el ticket
-  id_prioridad: number;
-};
+export async function POST(req: Request) {
+  try {
+    const { id_ticket, id_estado, id_desarrollador } = await req.json();
 
-export function useCreateTicket() {
-  const [loadingTicket, setLoadingTicket] = useState(false);
-  const [errorTicket, setErrorTicket] = useState<string | null>(null);
-  const [successTicket, setSuccessTicket] = useState<string | null>(null);
-
-  const createTicket = async (datos: CreateTicketData) => {
-    setLoadingTicket(true);
-    setErrorTicket(null);
-    setSuccessTicket(null);
-
-    try {
-      // 1️⃣ Insertar ticket en la tabla ticket
-      const { data: ticket, error: ticketError } = await supabase
-        .from("ticket")
-        .insert([{
-          id_proyecto: datos.id_proyecto,
-          sucursal: datos.sucursal,
-          departamento: datos.departamento,
-          problem: datos.problem,
-          id_usuario_creador: datos.id_usuario,
-          id_prioridad: datos.id_prioridad,
-          id_estado: 1, // Pendiente de asignación
-          fechainicio: new Date().toISOString()
-        }])
-        .select()
-        .single();
-
-      if (ticketError || !ticket) {
-        setErrorTicket(ticketError?.message || "Error al crear ticket");
-        return null;
-      }
-
-      // 2️⃣ Insertar comentario inicial en ticket_seguimiento
-      const comentarioInicial = `Ticket creado por el usuario. Problema: ${datos.problem}`;
-
-      const { data: seguimiento, error: seguimientoError } = await supabase
-        .from("ticket_seguimiento")
-        .insert([{
-          id_ticket: ticket.id_ticket,
-          id_usuario: datos.id_usuario,
-          comentario: comentarioInicial
-        }])
-        .select()
-        .single();
-
-      if (seguimientoError) {
-        setErrorTicket(seguimientoError.message);
-        return null;
-      }
-
-      setSuccessTicket("Ticket creado correctamente");
-      return ticket;
-
-    } catch (err) {
-      console.error(err);
-      setErrorTicket("Error inesperado al crear ticket");
-      return null;
-    } finally {
-      setLoadingTicket(false);
+    if (!id_ticket || !id_estado || !id_desarrollador) {
+      return NextResponse.json({
+        success: false,
+        message: "Faltan datos obligatorios",
+      });
     }
-  };
 
-  return { createTicket, loadingTicket, errorTicket, successTicket };
+    // Actualiza estado y asigna desarrollador
+    const { data, error } = await supabase
+      .from("ticket")
+      .update({ id_estado, id_desarrollador })
+      .eq("id_ticket", id_ticket)
+      .select()
+      .single();
+
+    if (error || !data) {
+      return NextResponse.json({
+        success: false,
+        message: error?.message || "Error al actualizar el ticket",
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      ticket: data,
+      message: "Ticket actualizado con desarrollador correctamente",
+    });
+
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({
+      success: false,
+      message: "Error inesperado al actualizar el ticket",
+    });
+  }
 }
+
+
+
+dashboardpage
+
+
+const handleAccept = async (ticket: Ticket) => {
+  const idDesarrolladorString = localStorage.getItem("idUsuario");
+  if (!idDesarrolladorString) return;
+
+  const id_desarrollador = Number(idDesarrolladorString);
+
+  await fetch("/api/dashboard/actualizar-estado", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      id_ticket: ticket.id_ticket,
+      id_estado: 2, // Asignado
+      id_desarrollador
+    }),
+  });
+
+  // Actualiza la UI
+  setSelectedTicket(ticket);
+  setShowCommentsFor(ticket.id_ticket);
+  reloadTickets();
+};

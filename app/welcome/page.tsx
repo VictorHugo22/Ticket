@@ -6,14 +6,39 @@ import TicketDetail from "@/app/components/dashboard/TicketDetail";
 import TicketGrid from "@/app/components/dashboard/TicketGrid";
 import TicketForm from "@/app/components/dashboard/TicketForm";
 import { useTickets, Ticket } from "@/app/hook/dashboard/useTicketGrid";
+import { useTicketActions } from "../hook/dashboard/useTicketActions";
 
 
 
 export default function DashboardPage() {
   const { tickets, loading, error, reloadTickets } = useTickets();
+  const { aceptarTicket } = useTicketActions();
+
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [showCommentsFor, setShowCommentsFor] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  //const [ticketAccpet, setTicketAccpet] = useState<Ticket | null>(null);
+
+  // clic en la tarjeta para ver la informacion
+  const handleSelect = (ticket: Ticket) => {
+    if (ticket.Estado?.id_estado === "2") {
+      setSelectedTicket(ticket);
+      setShowCommentsFor(ticket.id_ticket);
+    } else {
+      setSelectedTicket(ticket);
+      setShowCommentsFor(null);
+    }
+  };
+
+  // clic al boton aceptar
+  const handleAccept = async (ticket: Ticket) => {
+    const success = await aceptarTicket(ticket.id_ticket);
+
+    if (!success) return;
+    // setSelectedTicket(ticket);
+    // setShowCommentsFor(ticket.id_ticket);
+    reloadTickets();
+  }
 
   const handleOpenModal = () => setShowCreateModal(true);
   const handleCloseModal = () => setShowCreateModal(false);
@@ -24,11 +49,14 @@ export default function DashboardPage() {
     ? tickets
     : tickets.filter((ticket) => ticket.Estado?.nombree === estadoFiltro);
 
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-900 text-white">
-      <Header />
+      <Header sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar}/>
       <div className="flex flex-1 overflow-hidden mb-5">
-        <Sidebar onCreateTicket={handleOpenModal} />
+        <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} onCreateTicket={handleOpenModal} />
 
         <main className="flex-1 p-6 overflow-auto">
           <div className="flex gap-5">
@@ -64,17 +92,24 @@ export default function DashboardPage() {
           {!loading && !error && (
             <TicketGrid
               tickets={ticketsFiltrados}
-              onSelect={setSelectedTicket}
-              onAccept={(ticket) =>{
-                setSelectedTicket(ticket);
-                setShowCommentsFor(ticket.id_ticket);
-              }}
+              onSelect={handleSelect}
+              onAccept={handleAccept}
+            // onSelect={setSelectedTicket}
+            // onAccept={(ticket) => {
+            //   setSelectedTicket(ticket);
+            // }}
             />
           )}
         </main>
 
         <aside className="w-1/4 p-6 border-l border-gray-700 overflow-y-auto mb-5">
-          <TicketDetail ticket={selectedTicket} />
+          {selectedTicket && (
+            <TicketDetail
+              ticket={selectedTicket}
+              showCommentsFor={showCommentsFor}
+            />
+          )}
+
         </aside>
       </div>
 
