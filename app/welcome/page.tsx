@@ -17,10 +17,17 @@ export default function DashboardPage() {
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [showCommentsFor, setShowCommentsFor] = useState<number | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  //const [ticketAccpet, setTicketAccpet] = useState<Ticket | null>(null);
+  const [ticketDetailComment, setTicketDetailComment] = useState("");
 
   // clic en la tarjeta para ver la informacion
   const handleSelect = (ticket: Ticket) => {
+    if (ticketDetailComment.trim() !== ""){
+      const confirmar = window.confirm(
+        "Tienes comentarios sin guardar. Si cambias de ticket, se perderan. Deseas continuar?"
+      );
+
+      if (!confirmar) return;
+    }
     if (ticket.Estado?.id_estado === "2") {
       setSelectedTicket(ticket);
       setShowCommentsFor(ticket.id_ticket);
@@ -28,6 +35,8 @@ export default function DashboardPage() {
       setSelectedTicket(ticket);
       setShowCommentsFor(null);
     }
+
+    setTicketDetailComment("");
   };
 
   // clic al boton aceptar
@@ -71,7 +80,7 @@ export default function DashboardPage() {
               Asignado
             </button>
             <button
-              onClick={() => setEstadoFiltro("En Atencion")}
+              onClick={() => setEstadoFiltro("En atencion")}
               className="flex items-center w-32 hover:bg-amber-500 gap-2 mb-2 p-2 rounded font-semibold">
               En Atencion
             </button>
@@ -107,6 +116,8 @@ export default function DashboardPage() {
             <TicketDetail
               ticket={selectedTicket}
               showCommentsFor={showCommentsFor}
+              comentario={ticketDetailComment}
+              setComentario={setTicketDetailComment}
             />
           )}
 

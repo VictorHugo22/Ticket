@@ -5,11 +5,11 @@ export async function POST(req: Request) {
     const { id_proyecto,
         sucursal,
         departamento,
-        //problem,
+        problem,
         fechainicio,
         id_usuario,
         id_prioridad,
-        comentario,
+        //comentario,
         fecha_creacion
     } = await req.json();
 
@@ -26,7 +26,6 @@ export async function POST(req: Request) {
         id_proyecto,
         sucursal,
         departamento,
-        fechainicio,
         id_usuario
     });
 
@@ -36,7 +35,7 @@ export async function POST(req: Request) {
             id_proyecto: id_proyecto,
             sucursal: sucursal,
             departamento: departamento,
-            //reporteproblema: problem,
+            reporteproblema: problem,
             id_usuario: id_usuario,
             fechainicio: fechaInicio,
             id_prioridad: id_prioridad,
@@ -61,7 +60,7 @@ export async function POST(req: Request) {
         .insert([{
             id_ticket: id_ticket,
             id_usuario: id_usuario,
-            comentario: comentario,
+            //comentario: comentario,
             fechaC: fechaInicio,
         }])
         .select()

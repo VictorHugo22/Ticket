@@ -1,70 +1,22 @@
-import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabaseClient";
+const handleSelect = (ticket: Ticket) => {
+  // Si hay comentario escrito en el ticket actual
+  if (ticketDetailComentario.trim() !== "") {
+    const confirmar = window.confirm(
+      "Tienes comentarios sin guardar. Si cambias de ticket se perderán. ¿Deseas continuar?"
+    );
 
-export async function POST(req: Request) {
-  try {
-    const { id_ticket, id_estado, id_desarrollador } = await req.json();
-
-    if (!id_ticket || !id_estado || !id_desarrollador) {
-      return NextResponse.json({
-        success: false,
-        message: "Faltan datos obligatorios",
-      });
-    }
-
-    // Actualiza estado y asigna desarrollador
-    const { data, error } = await supabase
-      .from("ticket")
-      .update({ id_estado, id_desarrollador })
-      .eq("id_ticket", id_ticket)
-      .select()
-      .single();
-
-    if (error || !data) {
-      return NextResponse.json({
-        success: false,
-        message: error?.message || "Error al actualizar el ticket",
-      });
-    }
-
-    return NextResponse.json({
-      success: true,
-      ticket: data,
-      message: "Ticket actualizado con desarrollador correctamente",
-    });
-
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({
-      success: false,
-      message: "Error inesperado al actualizar el ticket",
-    });
+    if (!confirmar) return; // cancelar el cambio de ticket si el usuario hace "Cancelar"
   }
-}
 
+  // Actualizar ticket seleccionado
+  if (ticket.Estado?.id_estado === "2") {
+    setSelectedTicket(ticket);
+    setShowCommentsFor(ticket.id_ticket);
+  } else {
+    setSelectedTicket(ticket);
+    setShowCommentsFor(null);
+  }
 
-
-dashboardpage
-
-
-const handleAccept = async (ticket: Ticket) => {
-  const idDesarrolladorString = localStorage.getItem("idUsuario");
-  if (!idDesarrolladorString) return;
-
-  const id_desarrollador = Number(idDesarrolladorString);
-
-  await fetch("/api/dashboard/actualizar-estado", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id_ticket: ticket.id_ticket,
-      id_estado: 2, // Asignado
-      id_desarrollador
-    }),
-  });
-
-  // Actualiza la UI
-  setSelectedTicket(ticket);
-  setShowCommentsFor(ticket.id_ticket);
-  reloadTickets();
+  // Limpiar comentario solo si el usuario confirmó el cambio
+  setTicketDetailComentario("");
 };
