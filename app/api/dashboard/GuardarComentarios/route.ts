@@ -20,9 +20,16 @@ export async function POST(req: Request) {
         //     });
         // }
 
+        const dateComment = new Date().toISOString();
+
         const { data, error } = await supabase
             .from("seguimiento")
-            .insert([{ comentario, id_ticket, id_usuario }])
+            .insert([{ 
+                comentario, 
+                id_ticket, 
+                id_usuario, 
+                fechaC: dateComment 
+            }])
             .select()
             .single();
 

@@ -6,7 +6,7 @@ export async function POST(req: Request) {
         sucursal,
         departamento,
         problem,
-        fechainicio,
+        //fechainicio,
         id_usuario,
         id_prioridad,
         //comentario,
@@ -22,12 +22,12 @@ export async function POST(req: Request) {
 
     const fechaInicio = new Date().toISOString(); // formato UTC "2026-05-15T15:30:00.000Z"
 
-    console.log("Datos recibidos en API:", {
-        id_proyecto,
-        sucursal,
-        departamento,
-        id_usuario
-    });
+    // console.log("Datos recibidos en API:", {
+    //     id_proyecto,
+    //     sucursal,
+    //     departamento,
+    //     id_usuario
+    // });
 
     const { data: ticket, error: ticketError } = await supabase
         .from("ticket")

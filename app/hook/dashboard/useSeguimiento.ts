@@ -13,6 +13,9 @@ export function useSeguimiento() {
         setLoading(true);
         setError(null);
 
+        const comentarioRecibido = {id_ticket, id_usuario, comentario};
+        console.log("comentario recibido desde el componente.....", comentarioRecibido);
+
         try {
             const res = await fetch("/api/dashboard/GuardarComentarios", {
                 method: "POST",
@@ -21,13 +24,14 @@ export function useSeguimiento() {
             });
 
             const data = await res.json();
+            console.log("respuesta del backend.......", data);
 
             if (!data.success) {
                 setError(data.message);
                 return null;
             }
 
-            return data.seguimiento;
+            return data.ticket;
         } catch (err) {
             console.error(err);
             setError("Error al enviar el comentario");

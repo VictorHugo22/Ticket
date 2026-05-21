@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Ticket } from "@/app/hook/dashboard/useTicketGrid"
 import { useSeguimiento } from "@/app/hook/dashboard/useSeguimiento";
+import { useHistorialComments } from "@/app/hook/dashboard/useHistorialComments";
 
 type Props = {
     ticket: Ticket | null;
@@ -14,9 +15,11 @@ type Props = {
 export default function TicketDetail({ ticket, showCommentsFor, comentario, setComentario }: Props) {
 
     // const [showSolution, setShowSolution] = useState(false);
-    //const [comentario, setComentario] = useState("");
+    // const [comentario, setComentario] = useState("");
     const { agregarComentario, loading, error } = useSeguimiento();
+    const { comentarioH, loadingH, errorH } = useHistorialComments(ticket?.id_ticket || 0);
 
+    console.log("Comentarios del ticket:", comentarioH);
 
     if (!ticket) {
         return <p className="text-gray-400">Selecciona un ticket para ver detalles</p>;
@@ -31,8 +34,7 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
     const isDeveloper = rolUsuario === "Programador1" || rolUsuario === "Programador2";
     const showCommentSection = (showCommentsFor === ticket.id_ticket) || (Number(ticket.Estado?.id_estado) === 3 && isDeveloper);
     //showCommentsFor === ticket.id_ticket;
-    console.log("Ticketdetail showcommentsFor -------====== ", (Number(ticket.Estado?.id_estado)));
-    console.log("Ticketdetail id_ticket -------====== ", (isDeveloper));
+    console.log("valor de showcoment", showCommentSection);
 
     const handleSubmitComment = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,11 +42,23 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
         if (!ticket) return;
 
         const id_usuario = Number(localStorage.getItem("idUsuario"));
-        const result = await agregarComentario(ticket.id_ticket, id_usuario, comentario);
 
+        // const comentariocontenido = {
+        //     id_ticket: ticket.id_ticket,
+        //     id_usuario,
+        //     comentario,
+        // };
+
+        // console.log("Contenido del comentario que se envia al hook......", comentariocontenido);
+
+        const result = await agregarComentario(ticket.id_ticket, id_usuario, comentario);
+        console.log("Valor de result...................", result);
         if (result) {
-            console.log("Coemntario guardado en la DB", result);
+            //console.log("Coemntario guardado en la DB", result);
+            alert("Comentario enviado correctamente.    :)      ");
             setComentario("");
+        } else {
+            alert("No se pudo guardar el comentario.     :(    ");
         }
         // console.log("comentario en tikcetdetail ???????????/", result);
         // console.log("Comentario del desarrollador", comentario);
@@ -70,10 +84,31 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
 
             </div>
 
+            <div
+                className="flex flex-col gap-2 bg-gray-800 p-3 rounded"
+            >
+                <h2 className="font-semibold text-white mb-2">Comentarios anteriores</h2>
+                {!loadingH && comentarioH.length === 0 && (
+                    <p className="text-gray-400">No hay comentarios anteriores</p>
+                )}
+
+                {comentarioH.map((c) => (
+                    <div
+                        key={c.id_seguimiento}
+                        className="p-2 rounded bg-gray-700 mb-2"
+                    >
+                        <p className="text-sm text-gray-200">{c.comentario}</p>
+                        <p className="text-xs text-gray-400">
+                            {new Date(c.FechaC).toLocaleString()}
+                        </p>
+                    </div>
+                ))}
+            </div>
+
 
             {showCommentSection && (
                 <form
-                    onSubmit={ handleSubmitComment }
+                    onSubmit={handleSubmitComment}
                     className="flex flex-col gap-2 bg-gray-800 p-3 rounded"
                 >
                     <h2 className="font-semibold text-white mb-2">Agregar solución</h2>
@@ -90,8 +125,20 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
                     >
                         Guardar comentario
                     </button>
+
                 </form>
             )}
+
+            <div
+                className="flex flex-col gap-2 bg-gray-800 p-3 rounded"
+            >
+                <button
+                    type="submit"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                >
+                    Validar Solución
+                </button>
+            </div>
         </div>
     );
 }
