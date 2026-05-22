@@ -99,7 +99,7 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
                     >
                         <p className="text-sm text-gray-200">{c.comentario}</p>
                         <p className="text-xs text-gray-400">
-                            {new Date(c.FechaC).toLocaleString()}
+                            {new Date(c.fechaC).toLocaleString()}
                         </p>
                     </div>
                 ))}

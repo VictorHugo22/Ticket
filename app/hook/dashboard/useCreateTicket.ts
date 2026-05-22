@@ -9,7 +9,7 @@ export type CreateTicketData = {
     //problem: string;
     id_usuario: number;
     id_prioridad: number;
-    //comentario: string;
+    //comentarioProblem: string;
 };
 
 export function useCreateTicket() {
@@ -22,7 +22,7 @@ export function useCreateTicket() {
         setError(null);
         setSuccess(null);
 
-        console.log("Datos enviados desde useCreateTicket:", data);
+        console.log("Datos recibidos desde el componente:........", data);
 
         try {
             const res = await fetch("/api/dashboard/CrearTicket", {
@@ -37,7 +37,7 @@ export function useCreateTicket() {
                     //problem: data.problem,
                     id_usuario: data.id_usuario,
                     id_prioridad: data.id_prioridad,
-                    //comentario: data.comentario,
+                    //comentario: data.comentarioProblem,
                 }),
             });
 

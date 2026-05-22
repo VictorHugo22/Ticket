@@ -2,45 +2,53 @@
 
 import { useTicketForm } from "@/app/hook/dashboard/useTicketForm";
 import { useCreateTicket } from "@/app/hook/dashboard/useCreateTicket";
+import { useSeguimiento } from "@/app/hook/dashboard/useSeguimiento"
 import { useForm } from "react-hook-form";
 
 type Props = {
     onTicketCreado?: () => void;
 };
 
-type TikcetFormData = {
-    id_proyectos: string;
-    id_prioridad: string;
-    sucursal: string;
-    departamento: string;
-    comentario: string;
+type TicketFormData = {
+    formIdProyecto: string;
+    formIdPrioridad: string;
+    formSucursal: string;
+    formDepartamento: string;
+    formComentarioProblema: string;
 }
 
 export default function TicketForm({ onTicketCreado }: Props) {
-    const { 
+    const {
         ticketProyectos,
-        loadingProyectos, 
-        errorProyectos, 
-        ticketPrioridad, 
-        loadingPrioridad, 
-        errorPrioridad 
+        loadingProyectos,
+        errorProyectos,
+        ticketPrioridad,
+        loadingPrioridad,
+        errorPrioridad
     } = useTicketForm();
 
-    const { 
-        createTicket, 
-        loadingTicket, 
-        errorTicket, 
-        successTicket 
+    const {
+        createTicket,
+        loadingTicket,
+        errorTicket,
+        successTicket
     } = useCreateTicket();
 
     const {
         register,
         handleSubmit,
         reset,
-        formState: {errors}
-    } = useForm<TikcetFormData>();
+        formState: { errors }
+    } = useForm<TicketFormData>();
 
-    const onSubmit = async (formData: TikcetFormData) => {
+    const {
+        agregarComentario,
+        loading: loading,
+        error: error,
+    } = useSeguimiento();
+
+    const onSubmit = async (formData: TicketFormData) => {
+        console.log("Datos capturados por React Hook Form:===========", formData);
         const idUsuarioString = localStorage.getItem("idUsuario");
 
         if (!idUsuarioString) {
@@ -50,28 +58,53 @@ export default function TicketForm({ onTicketCreado }: Props) {
 
         const idUsuario = Number(idUsuarioString);
 
-        const datosTicket = { // ----> construccion del objeto datosTicket
-            id_proyecto: Number(formData.id_proyectos),
-            sucursal: formData.sucursal,
-            departamento: formData.departamento,
+        const ticketPayload = { // ----> construccion del objeto datosTicket
+            id_proyecto: Number(formData.formIdProyecto),
+            sucursal: formData.formSucursal,
+            departamento: formData.formDepartamento,
             //problem: problem,
             id_usuario: idUsuario,
-            id_prioridad: Number(formData.id_prioridad),
-            comentario: formData.comentario
+            id_prioridad: Number(formData.formIdPrioridad),
+            //comentarioProblem: formData.comentarioProblema
         }; // <-------
 
-        console.log("Datos enviados desde TicketForm:", datosTicket);
+        console.log("Datos enviados desde TicketForm:", ticketPayload);
 
-        const ticketCreado = await createTicket(datosTicket);  // fetch al API useCreateTicket
+        const ticketCreado = await createTicket(ticketPayload);  // fetch al API useCreateTicket
 
-        if (ticketCreado) {
-            console.log("Ticket creado correctamente:", ticketCreado);
+        if (!ticketCreado) {
+            console.error("No se pudo crear el ticket");
+            return;
 
-            //Limpiar datos
-            reset();
-            if (onTicketCreado){
-                onTicketCreado();
-            }
+            // //Limpiar datos
+            // reset();
+            // if (onTicketCreado) {
+            //     onTicketCreado();
+        }
+
+        //console.log("Esto contiene tikcet creado.............Ticketform", ticketCreado);
+
+        const seguimientoPayload = {
+            id_ticket: ticketCreado.id_ticket,
+            id_usuario: idUsuario,
+            comentario: formData.formComentarioProblema,
+        };
+
+        const comentarioGuardado = await agregarComentario(
+            seguimientoPayload.id_ticket,
+            seguimientoPayload.id_usuario,
+            seguimientoPayload.comentario
+        );
+
+        if (!comentarioGuardado) {
+            console.error("El ticket se creo pero el comentario no se guardo correctamente.");
+            return;
+        }
+
+        reset();
+
+        if (onTicketCreado) {
+            onTicketCreado();
         }
     };
 
@@ -94,7 +127,7 @@ export default function TicketForm({ onTicketCreado }: Props) {
 
                 Proyecto
                 <select
-                    {...register("id_proyectos", {
+                    {...register("formIdProyecto", {
                         required: "Selecciona un proyecto"
                     })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
@@ -111,9 +144,9 @@ export default function TicketForm({ onTicketCreado }: Props) {
                     ))}
                 </select>
 
-                {errors.id_proyectos && (
+                {errors.formIdProyecto && (
                     <p className="text-red-500 text-sm">
-                        {errors.id_proyectos.message}
+                        {errors.formIdProyecto.message}
                     </p>
                 )}
             </label>
@@ -122,7 +155,7 @@ export default function TicketForm({ onTicketCreado }: Props) {
 
                 Prioridad
                 <select
-                    {...register("id_prioridad", {
+                    {...register("formIdPrioridad", {
                         required: "Selecciona una prioridad"
                     })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
@@ -139,9 +172,9 @@ export default function TicketForm({ onTicketCreado }: Props) {
 
                     ))}
                 </select>
-                {errors.id_prioridad && (
+                {errors.formIdPrioridad && (
                     <p className="text-red-500 text-sm">
-                        {errors.id_prioridad.message}
+                        {errors.formIdPrioridad.message}
                     </p>
                 )}
             </label>
@@ -149,15 +182,15 @@ export default function TicketForm({ onTicketCreado }: Props) {
             <label className="flex flex-col gap-1">
                 Sucursal
                 <input
-                    {...register("sucursal", {
+                    {...register("formSucursal", {
                         required: "La sucursal es obligatoria"
                     })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
                     placeholder="Escribe la sucursal"
                 />
-                {errors.sucursal && (
+                {errors.formSucursal && (
                     <p className="text-red-500 text-sm">
-                        {errors.sucursal.message}
+                        {errors.formSucursal.message}
                     </p>
                 )}
             </label>
@@ -165,31 +198,31 @@ export default function TicketForm({ onTicketCreado }: Props) {
             <label className="flex flex-col gap-1">
                 Departamento
                 <input
-                    {...register("departamento", {
+                    {...register("formDepartamento", {
                         required: "El departamento es obligatorio"
                     })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
                     placeholder="Escribe el departamento"
                 />
-                {errors.departamento && (
+                {errors.formDepartamento && (
                     <p className="text-red-500 text-sm">
-                        {errors.sucursal?.message}
-                    </p> 
+                        {errors.formDepartamento?.message}
+                    </p>
                 )}
             </label>
 
             <label className="flex flex-col gap-1">
                 Reporte del problema
                 <textarea
-                    {...register("comentario", {
+                    {...register("formComentarioProblema", {
                         required: "La descripcion del problema es obligatorio"
                     })}
                     className="p-2 rounded border bg-gray-700 text-white border-gray-600"
                     placeholder="Descripción del problema..."
                 />
-                {errors.comentario && (
+                {errors.formComentarioProblema && (
                     <p className="text-red-500 text-sm">
-                        {errors.sucursal?.message}
+                        {errors.formComentarioProblema?.message}
                     </p>
                 )}
             </label>

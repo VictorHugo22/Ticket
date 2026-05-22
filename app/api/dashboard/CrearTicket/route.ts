@@ -5,13 +5,14 @@ export async function POST(req: Request) {
     const { id_proyecto,
         sucursal,
         departamento,
-        problem,
+        //problem,
         //fechainicio,
         id_usuario,
         id_prioridad,
-        //comentario,
-        fecha_creacion
+        comentarioProblema,
     } = await req.json();
+
+    console.log("Datos del probelma que se envian desde el componente", comentarioProblema);
 
     if (!id_proyecto || !sucursal || !departamento || !id_usuario || !id_prioridad) {
         return NextResponse.json({
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
         });
     }
 
-    const fechaInicio = new Date().toISOString(); // formato UTC "2026-05-15T15:30:00.000Z"
+    const fechaInicio = new Date().toISOString(); // formato UTC "2026-05-15"
 
     // console.log("Datos recibidos en API:", {
     //     id_proyecto,
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
             id_proyecto: id_proyecto,
             sucursal: sucursal,
             departamento: departamento,
-            reporteproblema: problem,
+            //reporteproblema: problem,
             id_usuario: id_usuario,
             fechainicio: fechaInicio,
             id_prioridad: id_prioridad,

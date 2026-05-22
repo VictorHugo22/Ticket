@@ -6,7 +6,7 @@ export type Comentario = {
     id_ticket: number;
     id_usuario: number;
     comentario: string;
-    FechaC: string;
+    fechaC: string;
 };
 
 export function useHistorialComments(id_ticket: number) {
