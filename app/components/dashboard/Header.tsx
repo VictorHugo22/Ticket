@@ -18,7 +18,7 @@ export default function Header({sidebarOpen, toggleSidebar}: Props) {
         if (storedRol) setRol(storedRol);
     }, []);
 
-    console.log("ESTADO DE LA HAMBURGUESA......", toggleSidebar, sidebarOpen);
+    // console.log("ESTADO DE LA HAMBURGUESA......", toggleSidebar, sidebarOpen);
     return (
         <header className="flex justify-between items-center bg-gray-800 shadow px-6 py-3 mb-5">
             <button
@@ -30,7 +30,7 @@ export default function Header({sidebarOpen, toggleSidebar}: Props) {
             <h1 className="text-lg font-bold text-white">Dashboard</h1>
             <div className="flex items-center gap-4">
                 <span className="text-white font-bold">Bienvenido !</span> {nombre} - {rol}
-                <img src="/avatar.png" alt="Avatar" className="w-8 h-8 rounded-full" />
+                <img src="/images/Avatar.png" alt="Avatar" className="w-8 h-8 rounded-full" />
             </div>
         </header>
     );

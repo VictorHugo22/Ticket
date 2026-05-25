@@ -1,43 +1,28 @@
 'use client';
-import { useState, useEffect } from "react";
 
-export type Comentario = {
-  id_seguimiento: number;
-  id_ticket: number;
-  id_usuario: number;
-  comentario: string;
-  fecha_creacion: string;
-};
+import { useRouter } from "next/navigation";
 
-export function useSeguimientoHistorial(id_ticket: number) {
-  const [comentarios, setComentarios] = useState<Comentario[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export default function Header() {
+    const router = useRouter();
 
-  useEffect(() => {
-    async function fetchComentarios() {
-      try {
-        const res = await fetch(`/api/seguimiento/listar?id_ticket=${id_ticket}`);
-        const data = await res.json();
+    const handleLogout = () => {
+        localStorage.removeItem("idUsuario");
+        localStorage.removeItem("nombreUsuario");
+        localStorage.removeItem("rolUsuario");
 
-        if (!data.success) {
-          setError(data.message);
-          setComentarios([]);
-          return;
-        }
+        router.push("/");
+    };
 
-        setComentarios(data.comentarios || []);
-      } catch (err) {
-        console.error(err);
-        setError("Error al cargar comentarios");
-        setComentarios([]);
-      } finally {
-        setLoading(false);
-      }
-    }
+    return (
+        <header className="flex justify-between items-center bg-gray-800 px-6 py-3 text-white">
+            <h1>Dashboard</h1>
 
-    if (id_ticket) fetchComentarios();
-  }, [id_ticket]);
-
-  return { comentarios, loading, error };
+            <button
+                onClick={handleLogout}
+                className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+            >
+                Cerrar sesión
+            </button>
+        </header>
+    );
 }

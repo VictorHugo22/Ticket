@@ -22,7 +22,7 @@ export async function GET() {
       .order("id_ticket", { ascending: true });
 
     if (error) throw error;
-    console.log(data);
+    // console.log(data);
 
     return NextResponse.json({ 
         success: true,
