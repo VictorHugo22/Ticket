@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import { Ticket } from "@/app/hook/dashboard/useTicketGrid"
 import { useSeguimiento } from "@/app/hook/dashboard/useSeguimiento";
 import { useHistorialComments } from "@/app/hook/dashboard/useHistorialComments";
+import { useAuth } from "@/app/context/AuthContext";
 
 type Props = {
     ticket: Ticket | null;
@@ -16,21 +17,24 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
 
     // const [showSolution, setShowSolution] = useState(false);
     // const [comentario, setComentario] = useState("");
+    const { user } = useAuth();
     const { agregarComentario, loading, error } = useSeguimiento();
     const { comentarioH, loadingH, errorH } = useHistorialComments(ticket?.id_ticket || 0);
 
-    console.log("Comentarios del ticket:", comentarioH);
+    // console.log("Comentarios del ticket:", comentarioH);
 
     if (!ticket) {
         return <p className="text-gray-400">Selecciona un ticket para ver detalles</p>;
     }
-    console.log("datos del ticket en ticketdetail", ticket);
+    // console.log("datos del ticket en ticketdetail", ticket);
 
     // const handleAcceptClick = () => {
     //     setShowSolution(true);
     // }
-    const idUsuario = Number(localStorage.getItem("idUsuario"));
-    const rolUsuario = localStorage.getItem("rolUsuario");
+    // const idUsuario = Number(localStorage.getItem("idUsuario"));
+    // const rolUsuario = localStorage.getItem("rolUsuario");
+    const id_usuario = Number(user?.id_usuario);
+    const rolUsuario = user?.rol;
     const isDeveloper = rolUsuario === "Programador1" || rolUsuario === "Programador2";
     const showCommentSection = (showCommentsFor === ticket.id_ticket) || (Number(ticket.Estado?.id_estado) === 3 && isDeveloper);
     //showCommentsFor === ticket.id_ticket;
@@ -40,8 +44,8 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
         e.preventDefault();
 
         if (!ticket) return;
-
-        const id_usuario = Number(localStorage.getItem("idUsuario"));
+        
+        // const id_usuario = Number(localStorage.getItem("idUsuario"));
 
         // const comentariocontenido = {
         //     id_ticket: ticket.id_ticket,
@@ -52,7 +56,7 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
         // console.log("Contenido del comentario que se envia al hook......", comentariocontenido);
 
         const result = await agregarComentario(ticket.id_ticket, id_usuario, comentario);
-        console.log("Valor de result...................", result);
+        // console.log("Valor de result...................", result);
         if (result) {
             //console.log("Coemntario guardado en la DB", result);
             alert("Comentario enviado correctamente.    :)      ");

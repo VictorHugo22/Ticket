@@ -3,6 +3,7 @@
 import { useTicketForm } from "@/app/hook/dashboard/useTicketForm";
 import { useCreateTicket } from "@/app/hook/dashboard/useCreateTicket";
 import { useSeguimiento } from "@/app/hook/dashboard/useSeguimiento"
+import { useAuth } from "@/app/context/AuthContext";
 import { useForm } from "react-hook-form";
 
 type Props = {
@@ -28,13 +29,6 @@ export default function TicketForm({ onTicketCreado }: Props) {
     } = useTicketForm();
 
     const {
-        createTicket,
-        loadingTicket,
-        errorTicket,
-        successTicket
-    } = useCreateTicket();
-
-    const {
         register,
         handleSubmit,
         reset,
@@ -42,14 +36,24 @@ export default function TicketForm({ onTicketCreado }: Props) {
     } = useForm<TicketFormData>();
 
     const {
+        createTicket,
+        loadingTicket,
+        errorTicket,
+        successTicket
+    } = useCreateTicket();
+
+    const {
         agregarComentario,
         loading: loading,
         error: error,
     } = useSeguimiento();
 
+    const { user } = useAuth();
+    const idUsuarioString = user?.id_usuario;
+
     const onSubmit = async (formData: TicketFormData) => {
-        console.log("Datos capturados por React Hook Form:===========", formData);
-        const idUsuarioString = localStorage.getItem("idUsuario");
+        // console.log("Datos capturados por React Hook Form:===========", formData);
+        // const idUsuarioString = localStorage.getItem("idUsuario");
 
         if (!idUsuarioString) {
             console.error("No hay usuario logueado en localStorage");
@@ -118,7 +122,7 @@ export default function TicketForm({ onTicketCreado }: Props) {
         return <p className="text-red-500">{errorPrioridad}</p>;
     }
 
-    console.log("Proyectos recibidos: (tikcetForm)", ticketProyectos);
+    // console.log("Proyectos recibidos: (tikcetForm)", ticketProyectos);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">

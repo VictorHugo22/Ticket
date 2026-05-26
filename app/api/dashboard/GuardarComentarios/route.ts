@@ -21,6 +21,9 @@ export async function POST(req: Request) {
         // }
 
         const dateComment = new Date().toISOString();
+        // console.log("Valor de la variable id_ticket....", id_usuario);
+        // console.log("Valor de la variable id_usuario....", id_usuario);
+        // console.log("Valor de la variable comentario.....", comentario);
 
         const { data, error } = await supabase
             .from("seguimiento")

@@ -54,36 +54,36 @@ export async function POST(req: Request) {
         });
     }
 
-    const id_ticket = ticket.id_ticket;
+    // const id_ticket = ticket.id_ticket;
 
-    const { data: seguimiento, error: seguimientoError } = await supabase
-        .from("seguimiento")
-        .insert([{
-            id_ticket: id_ticket,
-            id_usuario: id_usuario,
-            //comentario: comentario,
-            fechaC: fechaInicio,
-        }])
-        .select()
-        .single();
+    // const { data: seguimiento, error: seguimientoError } = await supabase
+    //     .from("seguimiento")
+    //     .insert([{
+    //         id_ticket: id_ticket,
+    //         id_usuario: id_usuario,
+    //         //comentario: comentario,
+    //         fechaC: fechaInicio,
+    //     }])
+    //     .select()
+    //     .single();
 
-    if (seguimientoError) {
-        console.log("Error al insertar en la DB", seguimientoError);
-        return NextResponse.json({
-            success: false,
-            message: "Error al guardar los comentarios en el ticket",
-            error: seguimientoError.message,
-        });
-    }
+    // if (seguimientoError) {
+    //     console.log("Error al insertar en la DB", seguimientoError);
+    //     return NextResponse.json({
+    //         success: false,
+    //         message: "Error al guardar los comentarios en el ticket",
+    //         error: seguimientoError.message,
+    //     });
+    // }
 
 
-    console.log("Ticket insertado en la DB", ticket);
-    console.log("Comentarios insertados en el Ticket", seguimiento);
+    // console.log("Ticket insertado en la DB", ticket);
+    // console.log("Comentarios insertados en el Ticket", seguimiento);
 
     return NextResponse.json({
         success: true,
         message: "Ticket guardado correctamente",
         ticket: ticket,
-        seguimiento: seguimiento,
+        // seguimiento: seguimiento,
     });
 }

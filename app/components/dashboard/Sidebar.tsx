@@ -1,4 +1,5 @@
 'use client';
+import { useAuth } from "@/app/context/AuthContext";
 
 
 type Props = {
@@ -8,13 +9,14 @@ type Props = {
 };
 
 export default function Sidebar({ onCreateTicket, sidebarOpen, toggleSidebar }: Props) {
-    const rolUsuario = localStorage.getItem("rolUsuario");
+    const { user } = useAuth();
+    const rolUsuario = user?.rol;
+    
+    // const rolUsuario = localStorage.getItem("rolUsuario");
 
     const puedeCrearTicket = rolUsuario !== "Programador1" && rolUsuario !== "Programador2"; // solo otros roles pueden crear
-    const puedeAceptarTicket = rolUsuario === "Programador1"; // solo desarrolladores
+    //const puedeAceptarTicket = rolUsuario === "Programador1"; // solo desarrolladores
     
-
-
     return (
         <aside className={`bg-gray-800 text-white w-60 p-4 transition-transform duration-300
               ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}

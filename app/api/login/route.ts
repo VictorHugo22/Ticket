@@ -45,9 +45,6 @@ export async function POST(req: Request) {
             );
         } else {
             pssCorrecta = pssGuardada === password;
-            console.log("Valor de pssGuardada......", pssGuardada);
-            console.log("Valor de password.....", password);
-            // console.log("la contraseña es correcta ????.....", pssCorrecta);
             if (pssCorrecta) {
                 const newHash = await argon2.hash(password);
                 console.log("la contraseña hasheada......", newHash);
@@ -69,16 +66,43 @@ export async function POST(req: Request) {
             });
         }
 
-        return NextResponse.json(
-            {
-                success: true,
-                message: "Inicio de Sesión correcto",
-                user: { 
-                    nombre: data.nombre, 
-                    rol: data.TablaRol.nombrer, 
-                    id_usuario: data.id_usuario }
+        const sessionUser = {
+            id_usuario: data.id_usuario,
+            nombre: data.nombre,
+            rol: data.TablaRol?.nombrer,
+        };
+
+        // return NextResponse.json(
+        //     {
+        //         success: true,
+        //         message: "Inicio de Sesión correcto",
+        //         user: { 
+        //             nombre: data.nombre, 
+        //             rol: data.TablaRol.nombrer, 
+        //             id_usuario: data.id_usuario }
+        //     }
+        // );
+
+        const response = NextResponse.json({
+            success: true,
+            messgae: "Inicio de sesión correcto",
+            user: {
+                nombre: data.nombre,
+                rol: data.TablaRol.nombrer,
+                id_usuario: data.id_usuario
             }
-        );
+        });
+
+        response.cookies.set("session_user", JSON.stringify(sessionUser), {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: 60 * 60 * 8,
+        });
+
+        return response;
+
     } catch (err) {
         console.error("Error en el login:", err);
 
