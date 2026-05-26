@@ -27,7 +27,7 @@ export function useTicketForm() {
                 const res = await fetch("/api/dashboard/proyecto");
                 const result = await res.json();
 
-                console.log("Proyectos recibidos:", result);
+                // console.log("Proyectos recibidos:", result);
 
                 if (!result.success) {
                     setError(result.message);
@@ -36,8 +36,8 @@ export function useTicketForm() {
                 }
 
                 setTicketProyectos(result.proyectos || []);
-                console.log("Datos guardados del proyecto en setProyectos", setTicketProyectos);
-                console.log("Corroborar datos guardados en ticketProyectos", ticketProyectos);
+                // console.log("Datos guardados del proyecto en setProyectos", setTicketProyectos);
+                // console.log("Corroborar datos guardados en ticketProyectos", ticketProyectos);
 
             } catch (err) {
                 console.error("Error al cargar proyectos:", err);
@@ -55,7 +55,7 @@ export function useTicketForm() {
                 const res = await fetch("/api/dashboard/Prioridad");
                 const result = await res.json();
 
-                console.log("Prioridades recibidos:", result);
+                // console.log("Prioridades recibidos:", result);
 
                 if(!result.success) {
                     setErrorPrioridad(result.message);

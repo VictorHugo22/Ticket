@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 // console.log("Usuario recibido desde /api/auth/me:", data.user);
                 setUser(data.user);
             } else {
-                console.log("No hay sesión activa");
+                // console.log("No hay sesión activa");
                 setUser(null);
             }
         } catch (err) {

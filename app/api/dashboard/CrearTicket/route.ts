@@ -12,7 +12,7 @@ export async function POST(req: Request) {
         comentarioProblema,
     } = await req.json();
 
-    console.log("Datos del probelma que se envian desde el componente", comentarioProblema);
+    // console.log("Datos del probelma que se envian desde el componente", comentarioProblema);
 
     if (!id_proyecto || !sucursal || !departamento || !id_usuario || !id_prioridad) {
         return NextResponse.json({
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         .single();
 
     if (ticketError) {
-        console.log("Error al insertar en la DB", ticketError);
+        // console.log("Error al insertar en la DB", ticketError);
         return NextResponse.json({
             success: false,
             message: "Error al guardar el ticket",

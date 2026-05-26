@@ -72,7 +72,7 @@ export default function TicketForm({ onTicketCreado }: Props) {
             //comentarioProblem: formData.comentarioProblema
         }; // <-------
 
-        console.log("Datos enviados desde TicketForm:", ticketPayload);
+        // console.log("Datos enviados desde TicketForm:", ticketPayload);
 
         const ticketCreado = await createTicket(ticketPayload);  // fetch al API useCreateTicket
 

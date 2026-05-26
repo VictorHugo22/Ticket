@@ -14,7 +14,7 @@ export function useSeguimiento() {
         setError(null);
 
         const comentarioRecibido = {id_ticket, id_usuario, comentario};
-        console.log("comentario recibido desde el componente.....", comentarioRecibido);
+        // console.log("comentario recibido desde el componente.....", comentarioRecibido);
 
         try {
             const res = await fetch("/api/dashboard/GuardarComentarios", {
@@ -24,7 +24,7 @@ export function useSeguimiento() {
             });
 
             const data = await res.json();
-            console.log("respuesta del backend.......", data);
+            // console.log("respuesta del backend.......", data);
 
             if (!data.success) {
                 setError(data.message);

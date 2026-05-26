@@ -22,7 +22,7 @@ export function useCreateTicket() {
         setError(null);
         setSuccess(null);
 
-        console.log("Datos recibidos desde el componente:........", data);
+        // console.log("Datos recibidos desde el componente:........", data);
 
         try {
             const res = await fetch("/api/dashboard/CrearTicket", {
@@ -42,7 +42,7 @@ export function useCreateTicket() {
             });
 
             const result = await res.json();
-            console.log("Respuesta de crear ticket:", result);
+            // console.log("Respuesta de crear ticket:", result);
 
             if (!result.success) {
                 setError(result.message);

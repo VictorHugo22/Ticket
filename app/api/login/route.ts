@@ -47,7 +47,7 @@ export async function POST(req: Request) {
             pssCorrecta = pssGuardada === password;
             if (pssCorrecta) {
                 const newHash = await argon2.hash(password);
-                console.log("la contraseña hasheada......", newHash);
+                // console.log("la contraseña hasheada......", newHash);
                 const { error: updateError } = await supabase
                     .from("usuario")
                     .update({ contrasenia: newHash })

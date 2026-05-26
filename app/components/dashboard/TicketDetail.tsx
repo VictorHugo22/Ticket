@@ -38,7 +38,7 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
     const isDeveloper = rolUsuario === "Programador1" || rolUsuario === "Programador2";
     const showCommentSection = (showCommentsFor === ticket.id_ticket) || (Number(ticket.Estado?.id_estado) === 3 && isDeveloper);
     //showCommentsFor === ticket.id_ticket;
-    console.log("valor de showcoment", showCommentSection);
+    // console.log("valor de showcoment", showCommentSection);
 
     const handleSubmitComment = async (e: React.FormEvent) => {
         e.preventDefault();
