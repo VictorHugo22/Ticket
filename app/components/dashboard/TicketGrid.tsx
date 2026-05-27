@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { Ticket } from "@/app/hook/dashboard/useTicketGrid";
 import { Check } from "lucide-react";
+import { useAuth } from "@/app/context/AuthContext";
+import { puedeAceptarTicket } from "@/app/utils/permisos";
 
 type Props = {
     tickets: Ticket[];
@@ -10,9 +12,10 @@ type Props = {
 };
 
 export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
-    const rolUsuario = localStorage.getItem("rolUsuario");
+    const { user } = useAuth();
+    // const rolUsuario = localStorage.getItem("rolUsuario");
     
-    const AcceptTicketRoles = ["Programador1", "Programador2"];
+    // const AcceptTicketRoles = ["Programador1", "Programador2"];
     //const [nombreEstado, setNombreEstado] = useState<string | null>(null);
     if (tickets.length === 0) return <p>No hay tickets disponibles</p>;
 
@@ -39,7 +42,9 @@ export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
             {tickets.map((ticket) => {
                 const prioridad = ticket.id_prioridad ?? 0;
                 const isPending = Number(ticket.Estado?.id_estado) === 1;
-                const canAccept = isPending && AcceptTicketRoles.includes(rolUsuario || "");
+                const canAccept = 
+                isPending && puedeAceptarTicket(user?.rol || null) && 
+                ticket.Estado?.nombree === "Pendiente de asignacion";
                 // const AcceptTicket =
                 //     ["Programador1", "Programador2"].includes(rolUsuario || "") &&
                 //     ticket.Estado?.nombree == "Pendiente de asignacion";

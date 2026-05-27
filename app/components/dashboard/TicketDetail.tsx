@@ -5,15 +5,19 @@ import { Ticket } from "@/app/hook/dashboard/useTicketGrid"
 import { useSeguimiento } from "@/app/hook/dashboard/useSeguimiento";
 import { useHistorialComments } from "@/app/hook/dashboard/useHistorialComments";
 import { useAuth } from "@/app/context/AuthContext";
+import { puedeAceptarTicket, puedeCrearTicket } from "@/app/utils/permisos";
 
 type Props = {
     ticket: Ticket | null;
     showCommentsFor?: number | null;
     comentario: string;
     setComentario: React.Dispatch<React.SetStateAction<string>>;
+    onValidarSolucion?: (ticket: Ticket) => void;
+    onResuelto?: (ticket: Ticket) => void;
+    onComenzar?: (ticket: Ticket) => void;
 };
 
-export default function TicketDetail({ ticket, showCommentsFor, comentario, setComentario }: Props) {
+export default function TicketDetail({ ticket, showCommentsFor, comentario, setComentario, onValidarSolucion, onResuelto, onComenzar }: Props) {
 
     // const [showSolution, setShowSolution] = useState(false);
     // const [comentario, setComentario] = useState("");
@@ -35,8 +39,12 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
     // const rolUsuario = localStorage.getItem("rolUsuario");
     const id_usuario = Number(user?.id_usuario);
     const rolUsuario = user?.rol;
-    const isDeveloper = rolUsuario === "Programador1" || rolUsuario === "Programador2";
-    const showCommentSection = (showCommentsFor === ticket.id_ticket) || (Number(ticket.Estado?.id_estado) === 3 && isDeveloper);
+    // const isDeveloper = rolUsuario === "Programador1" || rolUsuario === "Programador2";
+    const showCommentSection = (showCommentsFor === ticket.id_ticket) || (Number(ticket.Estado?.id_estado) === 3 && puedeAceptarTicket);
+    const showButtonCom = (Number(ticket.Estado?.id_estado) === 2 && puedeAceptarTicket(rolUsuario || null));
+    const showButtonVS = (Number(ticket.Estado?.id_estado) === 3 && puedeAceptarTicket(rolUsuario || null));
+    const showButtonRes = (Number(ticket.Estado?.id_estado) === 4 && puedeCrearTicket(rolUsuario || null));
+    
     //showCommentsFor === ticket.id_ticket;
     // console.log("valor de showcoment", showCommentSection);
 
@@ -44,7 +52,7 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
         e.preventDefault();
 
         if (!ticket) return;
-        
+
         // const id_usuario = Number(localStorage.getItem("idUsuario"));
 
         // const comentariocontenido = {
@@ -67,6 +75,24 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
         // console.log("comentario en tikcetdetail ???????????/", result);
         // console.log("Comentario del desarrollador", comentario);
         // setComentario("");
+    }
+
+    const handleComenzar = () => {
+        if (!ticket) return;
+
+        onComenzar?.(ticket);
+    }
+
+    const handleValidarSolucion = () => {
+        if (!ticket) return;
+
+        onValidarSolucion?.(ticket);
+    }
+
+    const handleResuelto = () => {
+        if(!ticket) return;
+
+        onResuelto?.(ticket);
     }
 
     useEffect(() => {
@@ -133,16 +159,47 @@ export default function TicketDetail({ ticket, showCommentsFor, comentario, setC
                 </form>
             )}
 
-            <div
-                className="flex flex-col gap-2 bg-gray-800 p-3 rounded"
-            >
-                <button
-                    type="submit"
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+            {showButtonCom && (
+                <div
+                    className="flex flex-col gap-2 bg-gray-800 p-3 rounded"
                 >
-                    Validar Solución
-                </button>
-            </div>
+                    <button
+                        type="button"
+                        onClick={ handleComenzar }
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                    >
+                        Comenzar
+                    </button>
+                </div>
+            )}
+
+            {showButtonVS && (
+                <div
+                    className="flex flex-col gap-2 bg-gray-800 p-3 rounded"
+                >
+                    <button
+                        type="button"
+                        onClick={ handleValidarSolucion }
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                    >
+                        Validar Solución
+                    </button>
+                </div>
+            )}
+
+            {showButtonRes && (
+                <div
+                    className="flex flex-col gap-2 bg-gray-800 p-3 rounded"
+                >
+                    <button
+                        type="button"
+                        onClick={ handleResuelto }
+                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                    >
+                        Resuelto
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

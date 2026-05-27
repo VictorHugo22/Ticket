@@ -12,7 +12,9 @@ import { useTicketActions } from "../hook/dashboard/useTicketActions";
 
 export default function DashboardPage() {
   const { tickets, loading, error, reloadTickets } = useTickets();
-  const { aceptarTicket } = useTicketActions();
+  // const { aceptarTicket } = useTicketActions();
+  // const { validarSolucion } = useTicketActions();
+  const { IDEstado } = useTicketActions();
 
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [showCommentsFor, setShowCommentsFor] = useState<number | null>(null);
@@ -21,7 +23,7 @@ export default function DashboardPage() {
 
   // clic en la tarjeta para ver la informacion
   const handleSelect = (ticket: Ticket) => {
-    if (ticketDetailComment.trim() !== ""){
+    if (ticketDetailComment.trim() !== "") {
       const confirmar = window.confirm(
         "Tienes comentarios sin guardar. Si cambias de ticket, se perderan. Deseas continuar?"
       );
@@ -41,13 +43,25 @@ export default function DashboardPage() {
 
   // clic al boton aceptar
   const handleAccept = async (ticket: Ticket) => {
-    const success = await aceptarTicket(ticket.id_ticket);
+    const success = await IDEstado(ticket.id_ticket, Number(ticket.Estado?.id_estado)+1);
 
     if (!success) return;
     // setSelectedTicket(ticket);
     // setShowCommentsFor(ticket.id_ticket);
     reloadTickets();
   }
+
+  const handleActualizarEstado = async (ticket: Ticket) => {
+    const success = await IDEstado(ticket.id_ticket, Number(ticket.Estado?.id_estado)+1);
+
+    if (!success) return;
+
+    await reloadTickets();
+
+    setSelectedTicket(null);
+    setShowCommentsFor(null);
+    setTicketDetailComment("");
+  };
 
   const handleOpenModal = () => setShowCreateModal(true);
   const handleCloseModal = () => setShowCreateModal(false);
@@ -63,7 +77,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col h-screen w-screen bg-gray-900 text-white">
-      <Header sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar}/>
+      <Header sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       <div className="flex flex-1 overflow-hidden mb-5">
         <Sidebar sidebarOpen={sidebarOpen} toggleSidebar={toggleSidebar} onCreateTicket={handleOpenModal} />
 
@@ -85,7 +99,7 @@ export default function DashboardPage() {
               En Atencion
             </button>
             <button
-              onClick={() => setEstadoFiltro("En Validacion")}
+              onClick={() => setEstadoFiltro("En validacion")}
               className="flex items-center w-32 hover:bg-purple-600 gap-2 mb-2 p-2 rounded font-semibold">
               En Validacion
             </button>
@@ -118,6 +132,9 @@ export default function DashboardPage() {
               showCommentsFor={showCommentsFor}
               comentario={ticketDetailComment}
               setComentario={setTicketDetailComment}
+              onValidarSolucion={handleActualizarEstado}
+              onResuelto={handleActualizarEstado}
+              onComenzar={handleActualizarEstado}
             />
           )}
 

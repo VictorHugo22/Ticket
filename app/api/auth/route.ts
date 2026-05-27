@@ -16,10 +16,12 @@ export async function GET() {
         }
 
         const user = JSON.parse(sessionCookie.value);
+        const idUsuario = user.id_usuario;
 
         return NextResponse.json({
             success: true,
             user,
+            idUsuario
         });
 
     } catch (err) {
