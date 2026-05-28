@@ -15,9 +15,9 @@ export async function GET() {
 
     const user = JSON.parse(sessionCookie.value);
     const idUsuario = user.id_usuario;
-    console.log("este es el id_usuario en el back.......", idUsuario);
+    const role = user.rol;
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("ticket")
       .select(`
         id_ticket,
@@ -32,11 +32,20 @@ export async function GET() {
         Creador:fk_ticket_usuario(nombre, apellido),
         Desarr:ticket_id_desarrollador_fkey(nombre, apellido),
         Proyecto:proyecto(nombre)
-        `)
-      // .eq("id_usuario", idUsuario)
-      .order("id_ticket", { ascending: true });
+        `);
+    // .eq("id_usuario", idUsuario)
+    // .order("id_ticket", { ascending: true });
 
-    if (error) throw error;
+    if (role !== "Administrador") {
+      query = query.or(`id_usuario.eq.${idUsuario},id_desarrollador.eq.${idUsuario}`);
+    }
+
+
+    const { data, error } = await query.order("id_ticket", { ascending: false });
+
+    if (error) {
+      return NextResponse.json({ success: false, message: error.message });
+    }
     // console.log(data);
 
     return NextResponse.json({

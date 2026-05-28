@@ -12,8 +12,6 @@ import { useTicketActions } from "../hook/dashboard/useTicketActions";
 
 export default function DashboardPage() {
   const { tickets, loading, error, reloadTickets } = useTickets();
-  // const { aceptarTicket } = useTicketActions();
-  // const { validarSolucion } = useTicketActions();
   const { IDEstado } = useTicketActions();
 
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
@@ -46,8 +44,6 @@ export default function DashboardPage() {
     const success = await IDEstado(ticket.id_ticket, Number(ticket.Estado?.id_estado)+1);
 
     if (!success) return;
-    // setSelectedTicket(ticket);
-    // setShowCommentsFor(ticket.id_ticket);
     reloadTickets();
   }
 
@@ -72,6 +68,12 @@ export default function DashboardPage() {
     ? tickets
     : tickets.filter((ticket) => ticket.Estado?.nombree === estadoFiltro);
 
+  const limpiarTicketDetail = () => {
+    setSelectedTicket(null);
+    setShowCommentsFor(null);
+    setTicketDetailComment("");
+  };
+
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -84,27 +86,38 @@ export default function DashboardPage() {
         <main className="flex-1 p-6 overflow-auto">
           <div className="flex gap-5">
             <button
-              onClick={() => setEstadoFiltro("Pendiente de asignacion")}
+              onClick={() => {
+                setEstadoFiltro("Pendiente de asignacion");
+                limpiarTicketDetail();
+              }}
               className="flex items-center w-42 hover:bg-slate-600 gap-2 mb-2 p-2 rounded font-semibold">
               Pendeinte de Asig.
             </button>
             <button
-              onClick={() => setEstadoFiltro("Asignado")}
+              onClick={() => {setEstadoFiltro("Asignado");
+                limpiarTicketDetail();
+              }}
               className="flex items-center w-32 hover:bg-blue-600 gap-2 mb-2 p-2 rounded  font-semibold">
               Asignado
             </button>
             <button
-              onClick={() => setEstadoFiltro("En atencion")}
+              onClick={() => {setEstadoFiltro("En atencion");
+                limpiarTicketDetail();
+              }}
               className="flex items-center w-32 hover:bg-amber-500 gap-2 mb-2 p-2 rounded font-semibold">
               En Atencion
             </button>
             <button
-              onClick={() => setEstadoFiltro("En validacion")}
+              onClick={() => {setEstadoFiltro("En validacion");
+                limpiarTicketDetail();
+              }}
               className="flex items-center w-32 hover:bg-purple-600 gap-2 mb-2 p-2 rounded font-semibold">
               En Validacion
             </button>
             <button
-              onClick={() => setEstadoFiltro("Resuelto")}
+              onClick={() => {setEstadoFiltro("Resuelto");
+                limpiarTicketDetail();
+              }}
               className="flex items-center w-32 hover:bg-green-600 gap-2 mb-2 p-2 rounded font-semibold">
               Resuelto
             </button>
@@ -117,10 +130,6 @@ export default function DashboardPage() {
               tickets={ticketsFiltrados}
               onSelect={handleSelect}
               onAccept={handleAccept}
-            // onSelect={setSelectedTicket}
-            // onAccept={(ticket) => {
-            //   setSelectedTicket(ticket);
-            // }}
             />
           )}
         </main>

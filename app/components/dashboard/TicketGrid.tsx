@@ -13,20 +13,7 @@ type Props = {
 
 export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
     const { user } = useAuth();
-    // const rolUsuario = localStorage.getItem("rolUsuario");
-    
-    // const AcceptTicketRoles = ["Programador1", "Programador2"];
-    //const [nombreEstado, setNombreEstado] = useState<string | null>(null);
     if (tickets.length === 0) return <p>No hay tickets disponibles</p>;
-
-    // useEffect(() => {
-    //     const rol = localStorage.getItem("rolUsuario");
-    //     setRolUsuario(rol);
-    // }, []);
-
-    //const AcceptTicket = rolUsuario != "Programador1" && rolUsuario != "Programador2"; // solo otros roles pueden crear
-    //const puedeAceptarTicket = rolUsuario === "Programador1"; // solo desarrolladores
-
 
     const getPriorityImage = (prioridad: number) => {
         switch (prioridad) {
@@ -45,9 +32,6 @@ export default function TicketGrid({ tickets, onSelect, onAccept }: Props) {
                 const canAccept = 
                 isPending && puedeAceptarTicket(user?.rol || null) && 
                 ticket.Estado?.nombree === "Pendiente de asignacion";
-                // const AcceptTicket =
-                //     ["Programador1", "Programador2"].includes(rolUsuario || "") &&
-                //     ticket.Estado?.nombree == "Pendiente de asignacion";
 
                 return (
                     <div

@@ -27,13 +27,6 @@ export async function POST(req: Request) {
             });
         }
 
-        // if (data.contrasenia !== password) {
-        //     return NextResponse.json({
-        //         success: false,
-        //         message: "Contraseña incorrecta",
-        //     });
-        // }
-
         let pssCorrecta = false;
         const pssGuardada = data.contrasenia;
         const pssHashing = pssGuardada.startsWith("$argon2id$");

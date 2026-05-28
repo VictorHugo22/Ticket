@@ -18,7 +18,7 @@ export async function GET(req: Request) {
             .from("seguimiento")
             .select("*")
             .eq("id_ticket", ticketIdNum)
-            .order("fechaC", { ascending: true });
+            .order("id_seguimiento", { ascending: true });
 
         if (error) {
             return NextResponse.json({

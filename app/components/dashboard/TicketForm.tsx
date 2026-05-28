@@ -52,13 +52,11 @@ export default function TicketForm({ onTicketCreado }: Props) {
     const idUsuarioString = user?.id_usuario;
 
     const onSubmit = async (formData: TicketFormData) => {
-        // console.log("Datos capturados por React Hook Form:===========", formData);
-        // const idUsuarioString = localStorage.getItem("idUsuario");
 
-        if (!idUsuarioString) {
-            console.error("No hay usuario logueado en localStorage");
-            return;
-        }
+        // if (!idUsuarioString) {
+        //     console.error("No hay usuario logueado en localStorage");
+        //     return;
+        // }
 
         const idUsuario = Number(idUsuarioString);
 
@@ -66,24 +64,15 @@ export default function TicketForm({ onTicketCreado }: Props) {
             id_proyecto: Number(formData.formIdProyecto),
             sucursal: formData.formSucursal,
             departamento: formData.formDepartamento,
-            //problem: problem,
             id_usuario: idUsuario,
             id_prioridad: Number(formData.formIdPrioridad),
-            //comentarioProblem: formData.comentarioProblema
         }; // <-------
-
-        // console.log("Datos enviados desde TicketForm:", ticketPayload);
 
         const ticketCreado = await createTicket(ticketPayload);  // fetch al API useCreateTicket
 
         if (!ticketCreado) {
             console.error("No se pudo crear el ticket");
             return;
-
-            // //Limpiar datos
-            // reset();
-            // if (onTicketCreado) {
-            //     onTicketCreado();
         }
 
         //console.log("Esto contiene tikcet creado.............Ticketform", ticketCreado);

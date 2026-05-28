@@ -27,7 +27,6 @@ export function useHistorialComments(id_ticket: number) {
                     setComentarioH([]);
                     return;
                 }
-                // console.log("lista de comentaros.........", data);
                 setComentarioH(data.comentarios || []);
             } catch (err) {
                 console.error(err);

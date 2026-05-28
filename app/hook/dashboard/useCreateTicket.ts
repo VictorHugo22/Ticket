@@ -6,10 +6,8 @@ export type CreateTicketData = {
     id_proyecto: number;
     sucursal: string;
     departamento: string;
-    //problem: string;
     id_usuario: number;
     id_prioridad: number;
-    //comentarioProblem: string;
 };
 
 export function useCreateTicket() {
@@ -22,7 +20,6 @@ export function useCreateTicket() {
         setError(null);
         setSuccess(null);
 
-        // console.log("Datos recibidos desde el componente:........", data);
 
         try {
             const res = await fetch("/api/dashboard/CrearTicket", {
@@ -34,15 +31,12 @@ export function useCreateTicket() {
                     id_proyecto: data.id_proyecto,
                     sucursal: data.sucursal,
                     departamento: data.departamento,
-                    //problem: data.problem,
                     id_usuario: data.id_usuario,
                     id_prioridad: data.id_prioridad,
-                    //comentario: data.comentarioProblem,
                 }),
             });
 
             const result = await res.json();
-            // console.log("Respuesta de crear ticket:", result);
 
             if (!result.success) {
                 setError(result.message);

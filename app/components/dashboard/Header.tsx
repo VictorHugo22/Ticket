@@ -11,9 +11,6 @@ type Props = {
 
 export default function Header({ sidebarOpen, toggleSidebar }: Props) {
     const { user, loadingAuth, logout } = useAuth();
-    // console.log("Este es el valor que tiene user en Header.....", user);
-    // const [nombre, setNombre] = useState<string>("");
-    // const [rol, setRol] = useState<string>("");
 
     const [showUserMenu, setShowUserMenu] = useState(false);
     const router = useRouter();
@@ -23,14 +20,6 @@ export default function Header({ sidebarOpen, toggleSidebar }: Props) {
         router.push("/");
     };
 
-    // useEffect(() => {
-    //     const storedNombre = localStorage.getItem("nombreUsuario");
-    //     const storedRol = localStorage.getItem("rolUsuario");
-    //     if (storedNombre) setNombre(storedNombre);
-    //     if (storedRol) setRol(storedRol);
-    // }, []);
-
-    // console.log("ESTADO DE LA HAMBURGUESA......", toggleSidebar, sidebarOpen);
     return (
         <header className="flex justify-between items-center bg-gray-800 shadow px-6 py-3 mb-5">
             <button

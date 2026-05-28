@@ -5,7 +5,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 type AuthUser = {
     id_usuario: number;
     nombre: string;
-    //id_rol?: number;
     rol: string;
 };
 
@@ -24,21 +23,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const reloadUser = async () => {
         try {
-            // console.log("Ejecutando reloadUser...");
             const res = await fetch("/api/auth");
             const data = await res.json();
 
-            // console.log("Respuesta de /api/auth/me:", data);
 
             if (data.success) {
-                // console.log("Usuario recibido desde /api/auth/me:", data.user);
+                
                 setUser(data.user);
             } else {
-                // console.log("No hay sesión activa");
                 setUser(null);
             }
         } catch (err) {
-            // console.error("Error cargando usuario:", err);
             setUser(null);
         } finally {
             setLoadingAuth(false);

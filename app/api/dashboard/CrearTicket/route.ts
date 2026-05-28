@@ -9,7 +9,7 @@ export async function POST(req: Request) {
         //fechainicio,
         id_usuario,
         id_prioridad,
-        comentarioProblema,
+        //comentarioProblema,
     } = await req.json();
 
     // console.log("Datos del probelma que se envian desde el componente", comentarioProblema);
