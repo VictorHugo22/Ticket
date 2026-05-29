@@ -78,7 +78,7 @@ export async function POST(req: Request) {
 
         const response = NextResponse.json({
             success: true,
-            messgae: "Inicio de sesión correcto",
+            message: "Inicio de sesión correcto",
             user: {
                 nombre: data.nombre,
                 rol: data.TablaRol.nombrer,

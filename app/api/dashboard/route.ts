@@ -36,8 +36,16 @@ export async function GET() {
     // .eq("id_usuario", idUsuario)
     // .order("id_ticket", { ascending: true });
 
-    if (role !== "Administrador") {
-      query = query.or(`id_usuario.eq.${idUsuario},id_desarrollador.eq.${idUsuario}`);
+    // if (role !== "Administrador") {
+    //   query = query.or(`id_usuario.eq.${idUsuario},id_desarrollador.eq.${idUsuario}`);
+    // }  
+
+    if (role === "Administrador") {
+
+    } else if (role === "Tecnico-L1" || role === "Tecnico-L2") {
+      query = query.eq("id_usuario", idUsuario);
+    } else if (role === "Programador1" || role === "Programador2") {
+      query = query.or(`id_estado.eq.1,id_desarrollador.eq.${idUsuario}`);
     }
 
 
